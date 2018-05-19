@@ -1,0 +1,285 @@
+﻿/******manager-index.jsp样式*****/
+.alert.alert-info {
+	border: 1px solid #85c5e5;
+	background: #afd9ee;
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #afd9ee),
+		color-stop(1, #d9edf7) );
+	background: -ms-linear-gradient(bottom, #afd9ee, #d9edf7);
+	background: -moz-linear-gradient(center bottom, #afd9ee 0%, #d9edf7 100%);
+	background: -o-linear-gradient(bottom, #afd9ee, #d9edf7);
+	filter: progid:dximagetransform.microsoft.gradient(startColorStr='#4d5b76',
+		EndColorStr='#6c7a95' );
+	-ms-filter:
+		"progid:DXImageTransform.Microsoft.gradient(startColorStr='#d9edf7',EndColorStr='#afd9ee')";
+}
+.alert {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    padding: .5em 1em;
+    margin-top: 1em;
+    border: 1px solid #f2e187;
+    background: #f7ecb5;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #f7ecb5), color-stop(1, #fcf8e3) );
+    background: -ms-linear-gradient(bottom, #f7ecb5, #fcf8e3);
+    background: -moz-linear-gradient(center bottom, #f7ecb5 0%, #fcf8e3 100%);
+    background: -o-linear-gradient(bottom, #f7ecb5, #fcf8e3);
+    filter: progid:dximagetransform.microsoft.gradient(startColorStr='#4d5b76', EndColorStr='#6c7a95' );
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fcf8e3',EndColorStr='#f7ecb5')";
+}
+
+.block {
+    border: 1px solid #ccc;
+    background: white;
+    margin: 1em 0em;
+}
+
+p.block-heading, a.block-heading, .block-heading a {
+    color: #505050;
+    background: #dddddd;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #dddddd), color-stop(1, #fafafa) );
+    background: -ms-linear-gradient(bottom, #dddddd, #fafafa);
+    background: -moz-linear-gradient(center bottom, #dddddd 0%, #fafafa 100%);
+    background: -o-linear-gradient(bottom, #dddddd, #fafafa);
+    filter: progid:dximagetransform.microsoft.gradient(startColorStr='#4d5b76', EndColorStr='#6c7a95' );
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fafafa',EndColorStr='#dddddd')";
+    display: block;
+    padding-left: 1em;
+    border-top: 1px solid #fff;
+    outline: none;
+}
+
+.block-heading {
+    border-bottom: 1px solid #a6a6a6;
+    border-left: none;
+    color: #505050;
+    display: block;
+    margin-bottom: 0px;
+    text-shadow: none;
+    text-transform: none;
+    font-weight: bold;
+    font-size: .85em;
+    line-height: 3em;
+}
+a {
+    text-decoration: none;
+    /* display: block; */
+    outline: none;
+}
+
+/******manager-course.jsp样式*****************************************************************************/
+.mt-15 {
+    margin-top: 15px;
+}
+.cms-search {
+    height: 40px;
+    line-height: 40px;
+    width: 100%;
+    border: 1px solid #CCC;
+}
+.search-sort-block-cur {
+    background-color: #CCC;
+}
+
+.search-sort-block {
+    width: 150px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    cursor: point;
+    float: left;
+    display: inline-block;
+    margin-right: 5px;
+}
+.search-sort-block:hover {
+    background-color: #CCC;
+}
+.search-sort-block span {
+    margin-left: 5px;
+}
+input[type="text"], input[type="password"] {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+}
+
+.search-text {
+    float: left;
+    height: 34px;
+    width: 200px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+}
+.search-btn {
+    min-width: 80px;
+    height: 34px;
+    line-height: 34px;
+    background-color: #0089D2;
+    text-align: center;
+    color: #FFF;
+    border-radius: 4px;
+    border: none;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.block-body {
+    margin: 1em;
+    min-height: .25em;
+}
+.block-body table {
+    margin-top: 12px;
+}
+table.table.list tr:first-child td {
+    border-top: 0px;
+}
+.ml-15 {
+    margin-left: 15px;
+}
+.w-350 {
+    width: 350px;
+}
+.ellipsis-multi {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.h-40 {
+    height: 40px;
+}
+.page-box{
+	 text-align: center;
+}
+/******manager-courseDetails.jsp样式*****************************************************************************/
+.chapter {
+    padding: 0px 10px 20px 10px;
+    border-bottom: 1px solid #eee;
+}
+.chapter h3 {
+    font-size: 1.25em;
+}
+.chapter strong {
+    font-size: 16px;
+    margin-bottom: 5px;
+    height: 40px;
+    line-height: 40px;
+}
+.chapter-edit {
+    float: right;
+    font-size: 12px;
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    display: inline-block;
+}
+.chapter h3 a {
+    text-decoration: none;
+    display: block;
+    outline: none;
+}
+.chapter-sub .chapter-sub-li {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #F3F5F7;
+    margin-bottom: 10px;
+    list-style-type: none;
+    padding: 0px 10px;
+}
+.w-8 {
+    width: 800px;
+}
+
+
+/******manager-carousel.jsp样式*****************************************************************************/
+.mt-10 {
+    margin-top: 10px;
+}
+.tr-bg-gray:hover {
+    background-color: #CCC;
+    cursor: pointer;
+}
+.tr-two-gray:hover {
+    background-color: #CCC;
+    cursor: pointer;
+}
+
+/******manager-classify.jsp样式*****************************************************************************/
+.pt-10 {
+    padding-top: 10px;
+}
+.panel-5 {
+    float: left;
+    width: 50%;
+    padding: 0px;
+}
+.block-body.collapse {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+.control-label {
+    padding-left: 0px;
+    float: left;
+    margin-top: 5px;
+    width: 80px;
+    text-align: right;
+}
+
+/******manager-user.jsp样式*****************************************************************************/
+.f-14 {
+    font-size: 14px;
+}
+.search-select {
+    float: left;
+    height: 34px;
+    line-height: 34px;
+    width: 200px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+}
+.btn-search {
+    width: 80px;
+    background-color: #0089D2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

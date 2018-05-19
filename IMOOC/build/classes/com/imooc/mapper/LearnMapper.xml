@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.ILearnDao" >
+
+	<!--如下type的Learn就是mybatis-config.xml中配置的Learn-->  
+  	<resultMap id="BaseResultMap" type="Learn" >  
+	  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型   -->
+	    <id column="learn_id" property="learnId" jdbcType="INTEGER" />  
+	    <result column="user_id" property="userId" jdbcType="VARCHAR" />  
+	    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+	    <result column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+	    <result column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />   
+	    <result column="learn_time" property="learnTime" jdbcType="TIMESTAMP" />   
+	    <result column="learn_status" property="learnStatus" jdbcType="INTEGER" /> 
+	    <result column="learn_usetime" property="learnUseTime" jdbcType="INTEGER" /> 
+	    
+	    <!-- 一对一： 学习记录表包含 小节表 -->
+	    <association property="smallChapter" javaType="com.imooc.entity.SmallChapter">
+	    	<id column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />  
+	    	<result column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+	    	<result column="small_chapter_order" property="smallChapterOrder" jdbcType="INTEGER" />  
+	    	<result column="small_chapter_title" property="smallChapterTitle" jdbcType="VARCHAR" />  
+	    	<result column="video_path" property="videoPath" jdbcType="VARCHAR" />
+	    	<result column="video_totaltime" property="videoTotalTime" jdbcType="VARCHAR" />
+	    	<result column="video_totaltime_second" property="videoTotalTimeSecond" jdbcType="INTEGER" />
+	    </association>
+	    
+	    <!-- 一对一： 学习记录表包含 章节表 -->
+	    <association property="chapter" javaType="com.imooc.entity.Chapter">
+	    	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+		    <id column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+		    <result column="course_id" property="courseId" jdbcType="INTEGER" />  
+		    <result column="chapter_order" property="chapterOrder" jdbcType="INTEGER" />  
+		    <result column="chapter_title" property="chapterTitle" jdbcType="VARCHAR" />
+	    </association>
+	    
+	    <!-- 一对一：评论表中包含用户表 -->
+	    <!-- 
+	    	property就是Chapter实体类里面包含的小节list对象; 
+	    	ofType就是包含的对象的映射路径，即包名+类名,此处由于在mybatis-config.xml中配置过，所以直接用user-->
+	    <association property="user" javaType="com.imooc.entity.User">  
+	    	<id column="user_id" property="userId" jdbcType="VARCHAR" />  
+		    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />  
+		    <result column="user_photo" property="userPhoto" jdbcType="VARCHAR" />  
+		    <result column="user_nickname" property="userNickName" jdbcType="VARCHAR" />  
+		    <result column="user_realname" property="userRealName" jdbcType="VARCHAR" />  
+		    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />  
+		    <result column="user_summary" property="userSummary" jdbcType="VARCHAR" />  
+		    <result column="user_qq" property="userQQ" jdbcType="VARCHAR" />  
+		    <result column="user_school" property="userSchool" jdbcType="VARCHAR" />  
+		    <result column="user_education" property="userEducation" jdbcType="VARCHAR" />  
+		    <result column="user_qualification" property="userQualification" jdbcType="VARCHAR" />  
+		    <result column="user_position" property="userPosition" jdbcType="VARCHAR" />  
+		    <result column="user_register_time" property="userRegisterTime" jdbcType="TIMESTAMP" />
+		    <result column="user_status" property="userStatus" jdbcType="INTEGER" />    
+		</association>
+		
+		<!--  一对一：评论表中包含课程表  -->
+		<association property="course" javaType="com.imooc.entity.Course">  
+			<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  --> 
+		    <id column="course_id" property="courseId" jdbcType="INTEGER" />  
+		    <result column="sorts_two_id" property="twoId" jdbcType="INTEGER" />  
+		    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+		    <result column="course_summary" property="courseSummary" jdbcType="VARCHAR" />   
+		    <result column="course_grade" property="courseGrade" jdbcType="VARCHAR" /> 
+		    <result column="course_totaltime" property="courseTotalTime" jdbcType="INTEGER" />  
+		    <result column="course_isproject" property="courseIsProject" jdbcType="INTEGER" />  
+		    <result column="course_price" property="coursePrice" jdbcType="INTEGER" />  
+		    <result column="user_id" property="userId" jdbcType="VARCHAR" />  
+		</association>
+
+  	</resultMap>
+   
+	<!--查询sql:  查询所有的学习记录表的数据  -->  
+	<select id="selectAllLearn" resultType="com.imooc.entity.Learn">  
+	  	select * FROM learn;  
+	</select>  
+  
+	<sql id="Base_Column_List" >  
+	  	learn_id, user_id, course_id,chapter_id, small_chapter_id, learn_status, learn_usetime 
+	</sql>  
+  
+	<!-- 查询sql:  通过学习记录表id 获得一个学习记录表 对象   -->
+	<select id="getLearn" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select * 
+		from learn  
+		where learn_id = #{learnId,jdbcType=INTEGER}  
+	</select>  
+	
+	<!-- 查询sql:  通过课程id查找   学习该课程的人数      -->
+	<select id="getLearnNumberByCourseId" resultType="int" parameterType="java.lang.Integer" >
+		SELECT count(*) from (SELECT * from learn where course_id = #{courseId,jdbcType=INTEGER} GROUP BY user_id) learn   
+	</select> 
+	
+	<!-- 通过 用户id+课程id 查找   用户最近学习的该课程的视频是 那个小节(的一条学习记录)  -->
+	<select id="getLearnOneByUserIdAndCourseId" resultMap="BaseResultMap" >
+		<!-- 没有关联 小节表和章节表  -->
+		<!-- select * from learn 
+		where user_id = #{userId,jdbcType=VARCHAR} and course_id = #{courseId,jdbcType=INTEGER}
+		order by learn_time DESC
+		limit 1 -->
+		
+		<!-- 学习记录表关联 小节表和章节表  -->
+		select * from learn, small_chapter, chapter
+		where learn.user_id = #{userId,jdbcType=VARCHAR}
+			and learn.course_id = #{courseId,jdbcType=INTEGER}
+			and learn.small_chapter_id = small_chapter.small_chapter_id
+			and small_chapter.chapter_id = chapter.chapter_id
+		order by learn_time DESC
+		limit 1
+	</select>
+	
+	<!-- 通过 用户id+课程id 查找   用户已经学习过的该课程的视频(的学习记录)  -->
+	<select id="getAllLearnByUserIdAndCourseId" resultMap="BaseResultMap" >
+		<!-- 没有关联 小节表和章节表  -->
+		<!-- select * from learn 
+		where user_id = #{userId,jdbcType=VARCHAR} and course_id = #{courseId,jdbcType=INTEGER}
+		order by learn_time DESC -->
+		
+		<!-- 学习记录表关联 小节表和章节表  -->
+		select * from learn, small_chapter, chapter
+		where learn.user_id = #{userId,jdbcType=VARCHAR}
+			and learn.course_id = #{courseId,jdbcType=INTEGER}
+			and learn.small_chapter_id = small_chapter.small_chapter_id
+			and small_chapter.chapter_id = chapter.chapter_id
+		order by learn_time DESC
+	</select>
+
+	<!-- 通过用户id 查找学习记录表(关联章节表+小节表+课程表)的集合，即查找我学习的课程记录 -->
+	<select id="getAllLearnByUserId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT *
+		from learn, course, chapter, small_chapter, user
+				where learn.course_id = course.course_id 
+				AND 	learn.chapter_id = chapter.chapter_id
+				AND 	learn.small_chapter_id = small_chapter.small_chapter_id
+				AND		learn.user_id = user.user_id
+		AND learn.learn_time in (
+					SELECT MAX(learn_time)
+					FROM learn
+					where user_id = #{userId,jdbcType=VARCHAR}
+					GROUP BY course_id
+		)
+	</select>
+	
+	<!-- 通过用户id 查找我学习的课程总数 -->
+	<select id="getCourseNumberByUserId" resultType="int" parameterType="java.lang.String">
+		SELECT count(*)
+		from (
+				SELECT *
+				FROM learn
+				where user_id = #{userId,jdbcType=VARCHAR}
+				GROUP BY course_id
+		) a
+	</select>
+	
+	
+	<!-- 通过 用户id+小节id  查找学习记录表中是否有这条数据，如果有则返回这天数据   -->
+	<select id="getLearnByUserIdAndSmallChapterId" resultMap="BaseResultMap" >
+		<!-- 学习记录表关联 小节表和章节表  -->
+		select * from learn
+		where learn.user_id = #{userId,jdbcType=VARCHAR} 
+			  and learn.small_chapter_id = #{smallChapterId,jdbcType=INTEGER} 
+	</select>
+	
+	
+	<!-- 查询sql: 通过用户id 查找 用户已经学习的时间(单位：秒) 
+  	   方法： 通过用户id 查找学习记录表集合，然后判断  学习记录表中的学习状态是0还是1,1表示已经学习完，0表示还没学习或者还没学习完
+  	   然后学习状态为1是，直接从小节表中，获取该小节的总时间；
+  	   学习状态为0是，取出学习记录表中的已经学习时间；  
+  	 然后两者相加，即是用户已经学习的时间
+    -->
+  <select id="selectUserLearnTime" resultType="int" parameterType="String">
+  	SELECT IFNULL(sum(a.sumTime),0) learnTime
+	from  (
+				(	
+					SELECT sum(video_totaltime_second) sumTime
+					from small_chapter
+					where small_chapter_id in(
+									SELECT small_chapter_id
+									from learn
+									where user_id = #{userId,jdbcType=VARCHAR} and learn_status = 1
+									) 
+				)
+				UNION
+				(
+					SELECT sum(learn_usetime) sumTime
+					from learn
+					where user_id = #{userId,jdbcType=VARCHAR} and learn_status = 0
+				)
+	) a
+  </select>
+	
+	<!-- 添加学习记录： 增加一条学习记录记录(字段可为空)   -->
+	<insert id="addLearn" parameterType="Learn">
+		insert into learn
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="learnId != null"> learn_id, </if>
+			<if test="userId != null"> user_id, </if>
+			<if test="courseId != null"> course_id, </if>
+			<if test="chapterId != null"> chapter_id, </if>
+			<if test="smallChapterId != null"> small_chapter_id, </if>
+			<if test="learnTime != null"> learn_time, </if>
+			<if test="learnStatus != null"> learn_status, </if>
+			<if test="learnUseTime != null"> learn_usetime, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="learnId != null">  #{learnId,jdbcType=INTEGER}, </if>
+			<if test="userId != null"> #{userId,jdbcType=VARCHAR}, </if>
+			<if test="courseId != null"> #{courseId,jdbcType=INTEGER}, </if>
+			<if test="chapterId != null"> #{chapterId,jdbcType=INTEGER}, </if>
+			<if test="smallChapterId != null"> #{smallChapterId,jdbcType=INTEGER}, </if>
+			<if test="learnTime != null"> #{learnTime,jdbcType=TIMESTAMP}, </if>
+			<if test="learnStatus != null"> #{learnStatus,jdbcType=INTEGER}, </if>
+			<if test="learnUseTime != null"> #{learnUseTime,jdbcType=INTEGER}, </if>
+		</trim>
+	</insert> 
+	
+	<!-- 更新sql:  -->
+	 <update id="updateLearn" parameterType="Learn" >  
+	   update learn  
+	   <set >   
+	     <if test="userId != null" >  
+	       user_id = #{userId,jdbcType=VARCHAR},  
+	     </if>  
+	     <if test="courseId != null" >  
+	       course_id = #{courseId,jdbcType=INTEGER},  
+	     </if> 
+	     <if test="chapterId != null" >  
+	       chapter_id = #{chapterId,jdbcType=INTEGER},  
+	     </if>  
+	     <if test="smallChapterId != null" >  
+	       small_chapter_id = #{smallChapterId,jdbcType=INTEGER},  
+	     </if>
+	     <if test="learnTime != null" >  
+	       learn_time = #{learnTime,jdbcType=TIMESTAMP},  
+	     </if>
+	     <if test="learnStatus != null" >  
+	       learn_status = #{learnStatus,jdbcType=INTEGER},  
+	     </if> 
+	     <if test="learnUseTime != null" >  
+	       learn_usetime = #{learnUseTime,jdbcType=INTEGER},  
+	     </if> 
+	   </set>  
+	   where learn_id = #{learnId,jdbcType=INTEGER}  
+	 </update>
+
+</mapper>  

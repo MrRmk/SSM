@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.ISmallChapterDao" >
+
+	<!-- 小节表 配置 -->
+   <resultMap id="BaseResultMap" type="SmallChapter">
+   
+   		<id column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />  
+    	<result column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+    	<result column="small_chapter_order" property="smallChapterOrder" jdbcType="INTEGER" />  
+    	<result column="small_chapter_title" property="smallChapterTitle" jdbcType="VARCHAR" />  
+    	<result column="video_path" property="videoPath" jdbcType="VARCHAR" />
+    	<result column="video_totaltime" property="videoTotalTime" jdbcType="VARCHAR" />
+    	<result column="video_totaltime_second" property="videoTotalTimeSecond" jdbcType="INTEGER" />
+    	
+   </resultMap>
+	<!--查询sql:  查询所有小节表的数据  -->  
+	<select id="selectAllSmallChapter" resultType="com.imooc.entity.SmallChapter">  
+	  	select * FROM small_chapter;  
+	</select>  
+  
+	<sql id="Base_Column_List" >  
+	  	small_chapter_id, chapter_id, small_chapter_order, small_chapter_title, video_path, video_totaltime, video_totaltime_second 
+	</sql>  
+  
+	<!-- 查询sql:  通过小节id 获得一个小节表 对象   -->
+	<select id="getSmallChapter" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select * 
+		from small_chapter  
+		where small_chapter_id = #{smallChapterId,jdbcType=INTEGER}  
+	</select>  
+	
+	<!-- 查询sql:  通过章节id查找   小节表的集合         -->
+	<select id="getAllSmallChapterByChapterId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select * 
+		from small_chapter  
+		where chapter_id = #{chapterId,jdbcType=INTEGER} 
+		order by small_chapter_order ASC
+	</select> 
+
+	<!-- 查询sql: 通过章节id和小节顺序(传入的还是小节id)   得到下一小节视频的小节记录         -->
+	<select id="getNextSmallChapByChapIdAndSmallChapId" resultMap="BaseResultMap">
+		select * from small_chapter
+		where chapter_id = #{chapterId,jdbcType=INTEGER} 
+			and small_chapter_order = (
+							select small_chapter_order+1 small_chapter_order from small_chapter
+							where small_chapter_id = #{smallChapterId,jdbcType=INTEGER}  
+							)
+	</select> 
+	
+	<!-- 查询sql: 通过下一章节id(传入的还是小节id)+小节顺序为1   得到下一章节的第一节的小节记录         -->
+	<select id="getNextChapFirstSmallChapIdBySmallChapId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select * from small_chapter
+		where small_chapter_order = 1 and chapter_id = (
+			select chapter_id+1 chapter_id from small_chapter
+			where small_chapter_id = #{smallChapterId,jdbcType=INTEGER}
+			)
+	</select> 
+	
+	
+	<!-- 添加小节： 增加一条小节记录(字段可为空)   -->
+	<insert id="addSmallChapter" parameterType="SmallChapter">
+		insert into small_chapter
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="smallChapterId != null"> small_chapter_id, </if>
+			<if test="chapterId != null"> chapter_id, </if>
+			<if test="smallChapterOrder != null"> small_chapter_order, </if>
+			<if test="smallChapterTitle != null"> small_chapter_title, </if>
+			<if test="videoPath != null"> video_path, </if>
+			<if test="videoTotalTime != null"> video_totaltime, </if>
+			<if test="videoTotalTimeSecond != null"> video_totaltime_second </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="smallChapterId != null">  #{smallChapterId,jdbcType=INTEGER}, </if>
+			<if test="chapterId != null"> #{chapterId,jdbcType=INTEGER}, </if>
+			<if test="smallChapterOrder != null"> #{smallChapterOrder,jdbcType=INTEGER}, </if>
+			<if test="smallChapterTitle != null"> #{smallChapterTitle,jdbcType=VARCHAR}, </if>
+			<if test="videoPath != null"> #{videoPath,jdbcType=VARCHAR}, </if>
+			<if test="videoTotalTime != null"> #{videoTotalTime,jdbcType=VARCHAR}, </if>
+			<if test="videoTotalTimeSecond != null"> #{videoTotalTimeSecond,jdbcType=INTEGER} </if>
+		</trim>
+	</insert>
+	
+	<!-- 删除小节:	通过小节id  删除一条小节记录   -->
+	 <delete id="deleteSmallChapter" parameterType="int" >  
+	   delete from small_chapter  
+	   where small_chapter_id = #{smallChapterId,jdbcType=INTEGER}  
+	 </delete> 
+	 
+	 <!-- 删除小节:	通过章id  删除所有小节记录   -->
+	 <delete id="deleteSmallChapterByChapterId" parameterType="int" >  
+	   delete from small_chapter  
+	   where chapter_id = #{chapterId,jdbcType=INTEGER}  
+	 </delete> 
+	 
+	 <!-- 更新sql:  -->
+	 <update id="updateSmallChapter" parameterType="SmallChapter" >  
+	   update small_chapter  
+	   <set >   
+	     <if test="chapterId != null" >  
+	       chapter_id = #{chapterId,jdbcType=INTEGER},  
+	     </if> 
+	     <if test="smallChapterOrder != null" >  
+	       small_chapter_order = #{smallChapterOrder,jdbcType=INTEGER},  
+	     </if>  
+	     <if test="smallChapterTitle != null" >  
+	       small_chapter_title = #{smallChapterTitle,jdbcType=VARCHAR},
+	     </if>
+	     <if test="videoPath != null" >  
+	       video_path = #{videoPath,jdbcType=VARCHAR},  
+	     </if>  
+	     <if test="videoTotalTime != null" >  
+	       video_totaltime = #{videoTotalTime,jdbcType=VARCHAR},
+	     </if>
+	     <if test="videoTotalTimeSecond != null" >  
+	       video_totaltime_second = #{videoTotalTimeSecond,jdbcType=INTEGER}
+	     </if>
+	   </set>  
+	   where small_chapter_id = #{smallChapterId,jdbcType=INTEGER}  
+	 </update>
+
+</mapper>  

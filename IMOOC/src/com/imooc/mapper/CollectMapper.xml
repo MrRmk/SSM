@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.ICollectDao" >
+
+   <!--如下type的Collect就是mybatis-config.xml中配置的Collect-->  
+  <resultMap id="BaseResultMap" type="Collect" > 
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+    <id column="collect_id" property="collectId" jdbcType="INTEGER" />  
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />  
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />  
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="collect_time" property="collectTime" jdbcType="TIMESTAMP" />
+    <result column="class_id" property="classId" jdbcType="INTEGER" />  
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+      
+  </resultMap> 
+  
+	<!--查询sql:  通过用户id  查询所有的收藏表的数据  -->  
+	<select id="selectAllCollect" resultMap="BaseResultMap" parameterType="java.lang.String">  
+	  	select * FROM collect 
+	  	where user_id = #{userId,jdbcType=VARCHAR}
+	  	order by collect_time DESC
+	</select>  
+	
+	<!--查询sql:  通过用户id  查询我的收藏课程总数  -->  
+	<select id="getCollectNumberByUserId" resultType="int" parameterType="java.lang.String">  
+	  	select count(*) FROM collect 
+	  	where user_id = #{userId,jdbcType=VARCHAR}
+	</select>  
+  
+	<sql id="Base_Column_List" >  
+	  	collect_id, user_id, course_id, course_name, collect_time, class_id, class_code, class_name
+	</sql>  
+  
+	<!-- 查询sql:  通过收藏id 获得一个收藏表 对象   -->
+	<select id="getCollect" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select   
+		<include refid="Base_Column_List" />  
+		from collect  
+		where collect_id = #{collectId,jdbcType=INTEGER}  
+	</select>  
+	
+	<!-- 查询sql:  通过用户id和课程id 来判断用户是否收藏了该课程, 若有则表示已收藏，否则未收藏   -->
+	<select id="isOrNotCollect" resultMap="BaseResultMap">
+		select * from collect  
+		where user_id = #{userId,jdbcType=VARCHAR} and course_id = #{courseId,jdbcType=INTEGER}  
+	</select>  
+
+	<!-- 添加收藏： 增加一条收藏记录(字段可为空)   -->
+	<insert id="addCollect" parameterType="Collect">
+		insert into collect
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="collectId != null"> collect_id, </if>
+			<if test="userId != null"> user_id, </if>
+			<if test="courseId != null"> course_id, </if>
+			<if test="courseName != null"> course_name, </if>
+			<if test="collectTime != null"> collect_time, </if>
+			<if test="classId != null"> class_id, </if>
+			<if test="classCode != null"> class_code, </if>
+			<if test="className != null"> class_name, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="collectId != null">  #{collectId,jdbcType=INTEGER}, </if>
+			<if test="userId != null"> #{userId,jdbcType=VARCHAR}, </if>
+			<if test="courseId != null"> #{courseId,jdbcType=INTEGER}, </if>
+			<if test="courseName != null"> #{courseName,jdbcType=VARCHAR}, </if>
+			<if test="collectTime != null"> #{collectTime,jdbcType=TIMESTAMP}, </if>
+			<if test="classId != null"> #{classId,jdbcType=INTEGER}, </if>
+			<if test="classCode != null"> #{classCode,jdbcType=VARCHAR}, </if>
+			<if test="className != null"> #{className,jdbcType=VARCHAR}, </if>
+		</trim>
+	</insert>
+	
+	<!-- 删除收藏:	通过收藏id  删除一条收藏记录   -->
+	 <delete id="deleteCollect" parameterType="int" >  
+	   delete from collect  
+	   where collect_id = #{collectId,jdbcType=INTEGER}  
+	 </delete>  
+	
+</mapper>  

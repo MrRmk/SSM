@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.ISortsOneDao" > 
+ 
+  <!--如下type的SortsOne就是mybatis-config.xml中配置的SortsOne-->  
+  <resultMap id="BaseResultMap" type="SortsOne" >  
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  --> 
+    <id column="sorts_one_id" property="oneId" jdbcType="INTEGER" />  
+    <result column="sorts_one_name" property="oneName" jdbcType="VARCHAR" />  
+    <result column="sorts_one_code" property="oneCode" jdbcType="VARCHAR" />   
+    
+  </resultMap>  
+  
+	<!--查询sql:  查询一级分类表的所有数据  -->  
+	<!-- 查询结果为list集合 或者查询有参数  返回类型用resultMap  -->
+  <select id="selectAllSortsOne" resultMap="BaseResultMap">  
+    select * 
+    FROM course_sorts_one 
+    order by sorts_one_id
+  </select>  
+  
+  <!--查询sql:  查询一级分类表的前七条数据  用于主页显示  -->  
+  <select id="selectAllSortsOneFirstSeven" resultMap="BaseResultMap">  
+    select * 
+    FROM course_sorts_one 
+    order by sorts_one_id
+	LIMIT 7
+  </select>  
+  
+  <sql id="Base_Column_List" >  
+    sorts_one_id, sorts_one_name, sorts_one_code
+  </sql>  
+  
+  <!-- 查询sql:	通过一级分类id 查询一级分类表   -->
+  <select id="getSortsOne" resultMap="BaseResultMap" parameterType="java.lang.Integer" >  
+    select   
+    <include refid="Base_Column_List" />  
+    from course_sorts_one  
+    where sorts_one_id = #{oneId,jdbcType=INTEGER}  
+  </select>  
+  
+  <!-- 查询sql:  通过一级分类编码查找   一级分类表 对象      (来获得一级分类名字) -->
+  <select id="getSortsOneByOneCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select   
+    <include refid="Base_Column_List" />  
+    from course_sorts_one  
+    where sorts_one_code = #{oneCode,jdbcType=VARCHAR}  
+  </select>
+  
+  <!-- 删除sql:	通过一级分类id 删除一级分类表   -->
+  <delete id="deleteSortsOne" parameterType="java.lang.Integer" >  
+    delete from course_sorts_one  
+    where sorts_one_id = #{oneId, jdbcType=INTEGER}  
+  </delete> 
+  
+  <!-- 添加sql:	添加一级分类表数据   -->
+  <insert id="insert" parameterType="SortsOne" >  
+    insert into course_sorts_one (sorts_one_id, sorts_one_name, sorts_one_code)  
+    values (#{oneId,jdbcType=INTEGER}, #{oneName,jdbcType=VARCHAR}, #{oneCode,jdbcType=VARCHAR}   
+      )  
+  </insert> 
+   
+  <!-- 添加sql:	添加一级分类表数据   -->
+  <insert id="addSortsOne" parameterType="SortsOne" >  
+    insert into course_sorts_one  
+    <trim prefix="(" suffix=")" suffixOverrides="," >  
+      <if test="oneId != null" >  
+        sorts_one_id,  
+      </if>  
+      <if test="oneName != null" >  
+        sorts_one_name,  
+      </if>  
+      <if test="oneCode != null" >  
+        sorts_one_code  
+      </if>  
+    </trim>  
+    <trim prefix="values (" suffix=")" suffixOverrides="," >  
+      <if test="oneId != null" >  
+        #{oneId,jdbcType=INTEGER},  
+      </if>  
+      <if test="oneName != null" >  
+        #{oneName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="oneCode != null" >  
+        #{oneCode,jdbcType=VARCHAR}  
+      </if>  
+    </trim>  
+  </insert>  
+  
+  <!-- 更新sql:  -->
+  <update id="updateSortsOne" parameterType="SortsOne" >  
+    update course_sorts_one  
+    <set >  
+      <if test="oneName != null" >  
+        sorts_one_name = #{oneName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="oneCode != null" >  
+        sorts_one_code = #{oneCode,jdbcType=VARCHAR}  
+      </if> 
+    </set>  
+    where sorts_one_id = #{oneId,jdbcType=INTEGER}  
+  </update>
+    
+  <!-- 更新sql:  -->
+  <update id="updateByPrimaryKey" parameterType="SortsOne" >  
+    update course_sorts_one  
+    set sorts_one_name = #{oneName,jdbcType=VARCHAR}, 
+      sorts_one_code = #{oneCode,jdbcType=VARCHAR}
+    where sorts_one_id = #{oneId,jdbcType=INTEGER}  
+  </update>  
+  
+  
+</mapper>  

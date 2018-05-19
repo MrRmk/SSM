@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.IManagerDao" > 
+ 
+  <!--如下type的Manager就是mybatis-config.xml中配置的Manager-->  
+  <resultMap id="BaseResultMap" type="Manager" >  
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  --> 
+    <id column="manager_account" property="managerAccount" jdbcType="VARCHAR" />  
+    <result column="manager_name" property="managerName" jdbcType="VARCHAR" />  
+    <result column="manager_password" property="managerPassword" jdbcType="VARCHAR" />  
+    <result column="manager_sex" property="managerSex" jdbcType="VARCHAR" /> 
+    
+  </resultMap>  
+  
+	<!--自己配置的查询表所有数据的sql-->  
+  <select id="selectAllManager" resultType="Manager">  
+    select * FROM MANAGER;  
+  </select>  
+  
+  <sql id="Base_Column_List" >  
+    manager_account, manager_name, manager_password, manager_sex  
+  </sql>  
+  
+  <!-- 查询sql:	通过管理员账号 查询管理员表   -->
+  <!-- 查询结果为list集合 或者查询有参数  返回类型用resultMap  -->
+  <select id="getManager" resultMap="BaseResultMap" parameterType="java.lang.String" >  
+    select   
+    <include refid="Base_Column_List" />  
+    from manager  
+    where manager_account = #{managerAccount,jdbcType=VARCHAR}  
+  </select>  
+  
+  <!-- 删除sql:	通过管理员账号 删除管理员表   -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >  
+    delete from manager  
+    where manager_account = #{managerAccount, jdbcType=VARCHAR}  
+  </delete> 
+  
+  <!-- 添加sql:	添加管理员表数据   -->
+  <insert id="insert" parameterType="Manager" >  
+    insert into manager (manager_account, manager_name, manager_password, manager_sex)  
+    values (#{managerAccount,jdbcType=VARCHAR}, #{managerName,jdbcType=VARCHAR}, #{managerPassword,jdbcType=VARCHAR} , #{managerSex,jdbcType=VARCHAR}   
+      )  
+  </insert> 
+   
+  <!-- 添加sql:	添加管理员表数据   -->
+  <insert id="insertSelective" parameterType="Manager" >  
+    insert into manager  
+    <trim prefix="(" suffix=")" suffixOverrides="," >  
+      <if test="managerAccount != null" >  
+        manager_account,  
+      </if>  
+      <if test="managerName != null" >  
+        manager_name,  
+      </if>  
+      <if test="managerPassword != null" >  
+        manager_password,  
+      </if>  
+      <if test="managerSex != null" >  
+        manager_sex  
+      </if>  
+    </trim>  
+    <trim prefix="values (" suffix=")" suffixOverrides="," >  
+      <if test="managerAccount != null" >  
+        #{managerAccount,jdbcType=VARCHAR},  
+      </if>  
+      <if test="managerName != null" >  
+        #{managerName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="managerPassword != null" >  
+        #{managerPassword,jdbcType=VARCHAR},  
+      </if> 
+      <if test="managerSex != null" >  
+        #{managerSex,jdbcType=VARCHAR}
+      </if>  
+    </trim>  
+  </insert>  
+  
+  <!-- 更新sql:  -->
+  <update id="updateManagerSelective" parameterType="Manager" >  
+    update manager  
+    <set >  
+      <if test="managerName != null" >  
+        manager_name = #{managerName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="managerPassword != null" >  
+        manager_password = #{managerPassword,jdbcType=VARCHAR},  
+      </if>  
+      <if test="managerSex != null" >  
+        manager_sex = #{managerSex,jdbcType=VARCHAR}  
+      </if> 
+    </set>  
+    where manager_account = #{managerAccount,jdbcType=VARCHAR}  
+  </update>
+    
+  <!-- 更新sql:  -->
+  <update id="updateByPrimaryKey" parameterType="Manager" >  
+    update manager  
+    set manager_name = #{managerName,jdbcType=VARCHAR}, 
+      manager_password = #{managerPassword,jdbcType=VARCHAR},  
+      manager_sex = #{managerSex,jdbcType=VARCHAR}  
+    where manager_account = #{managerAccount,jdbcType=VARCHAR}  
+  </update>  
+  
+  
+</mapper>  

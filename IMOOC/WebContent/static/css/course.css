@@ -1,0 +1,104 @@
+﻿/*********************course页面***************************/
+body {
+	margin: 0;
+	padding: 0;
+}
+.clearfix {
+    clear: both;
+}
+/*************header头部*******************/
+.header{
+    /* background-color: #E6E6E6;
+    box-shadow: none; */
+}
+/*****************主要内容 main页面*************************/
+
+.content {
+   /* padding-top: 32px;
+    min-height: 444px;*/
+}
+/* 主内容面板 */
+.content-wrap {
+    position: relative;
+    padding-top: 32px;
+    /* width: 1200px;
+    margin: 0 auto; */
+    overflow: hidden;
+    background-image: linear-gradient(180deg, #D1EEEE,#ffffff);
+}
+/******方向 start**************/
+.course-nav-row {
+    /*margin: 0px;
+    width: 100%;*/
+    width: 1200px;
+    margin: 0 auto;
+    border-bottom: 1px solid #d9dde1;
+    margin-bottom: 15px;
+}
+    .course-nav-row .hd {
+        float: left;
+        font-weight: bold;
+        font-size: 14px;
+        height: 35px;
+        line-height: 30px;
+    }
+    .course-nav-row .course-nav {
+        float: left;
+        width: 1090px;
+        text-align: left;
+        padding: 0px;
+        padding-left: 15px;
+    }
+    .course-nav-row .course-nav li{
+        list-style-type: none;
+    }
+    ul {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+        .course-nav-row .course-nav .cur-course-nav {
+            background-color: #777777;
+        }
+        .course-nav-row .course-nav .course-nav-item {
+            float: left;
+            margin-right: 20px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .content-wrap .course-nav-row .course-nav .cur-course-nav a:hover{
+            color: #FFF;
+        }
+        .course-nav-row .course-nav .course-nav-item a:hover{
+            color: #EC1500;
+        }
+        
+            .course-nav-row .course-nav .cur-course-nav a {
+                color: #FFF;
+            }
+
+            .course-nav-item a {
+                padding: 5px 10px;
+                color: #1c1f21;
+            }
+            a {
+                /*display: block;*/
+                outline: none;
+            }
+
+/*********课程列表************/
+.content .types-block{
+    padding-top: 0px;
+}
+span {
+    font-size: 14px;
+    color: #4d555d;
+}
+.types-block h3 a .color-oc {
+    color: #0089D2;
+}
+
+/*分页*/
+.page-box{
+    padding: 20px 0px 0px 0px;
+    text-align: center;
+}

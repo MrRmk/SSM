@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.IChapterDao" >
+
+   <!--如下type的Chapter就是mybatis-config.xml中配置的Chapter-->  
+  <resultMap id="BaseResultMap" type="Chapter" > 
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+    <id column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />  
+    <result column="chapter_order" property="chapterOrder" jdbcType="INTEGER" />  
+    <result column="chapter_title" property="chapterTitle" jdbcType="VARCHAR" />
+    
+    <!-- 一对多：章节表中 对应 包含 小节列表 -->
+    <!-- collection中不是javaType而是ofType,通过property也知道是list，即多个 ; property就是Chapter实体类里面包含的小节list对象-->
+    <collection property="smallChapterList" ofType="com.imooc.entity.SmallChapter"> 
+    	<id column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />  
+    	<result column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+    	<result column="small_chapter_order" property="smallChapterOrder" jdbcType="INTEGER" />  
+    	<result column="small_chapter_title" property="smallChapterTitle" jdbcType="VARCHAR" />  
+    	<result column="video_path" property="videoPath" jdbcType="VARCHAR" />
+    	<result column="video_totaltime" property="videoTotalTime" jdbcType="VARCHAR" />
+    	<result column="video_totaltime_second" property="videoTotalTimeSecond" jdbcType="INTEGER" />
+    </collection>
+  </resultMap> 
+  
+	<!--查询sql:  查询所有章节表的数据  -->  
+	<select id="selectAllChapter" resultType="com.imooc.entity.Chapter">  
+	  	select * FROM chapter;  
+	</select>  
+  
+	<sql id="Base_Column_List" >  
+	  	chapter_id, course_id, chapter_order, chapter_title 
+	</sql>  
+  
+	<!-- 查询sql:  通过章节id 获得一个章节表 对象   -->
+	<select id="getChapter" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select   
+		<include refid="Base_Column_List" />  
+		from chapter  
+		where chapter_id = #{chapterId,jdbcType=INTEGER}  
+	</select>  
+	
+	<!-- 查询sql:  通过课程id查找   章节表的集合      -->
+	<select id="getAllChapterByCourseId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select   
+		<include refid="Base_Column_List" />  
+		from chapter  
+		where course_id = #{courseId,jdbcType=INTEGER} 
+		order by chapter_order
+	</select> 
+
+	<!-- 查询sql: 通过课程id查找  查询  包含小节列表的  章节表的数据      -->
+	<select id="getChapterAndSmallChapter" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select   
+			c.*, s.*
+		from 
+			chapter c,
+			small_chapter s
+		where course_id = #{courseId,jdbcType=INTEGER} AND c.chapter_id = s.chapter_id
+		order by c.chapter_order, s.small_chapter_id, s.small_chapter_order
+	</select>
+	
+	<!-- 查询sql: 通过课程id+用户id查找  包含小节列表+学习记录表的  章节表的数据      -->
+	<!-- <select id="getChapterAndSmallChapterAndLearn" resultMap="BaseResultMap">
+		select   
+			c.*, s.*, l.*
+		from 
+			chapter c,
+			small_chapter s,
+			learn l
+		where c.course_id = #{courseId,jdbcType=INTEGER} AND c.chapter_id = s.chapter_id 
+					and l.course_id = c.course_id 
+					and l.small_chapter_id = s.small_chapter_id
+					and l.user_id = = #{userId,jdbcType=VARCHAR}
+		order by c.chapter_order, s.small_chapter_id
+	</select> -->
+
+	<!-- 添加章节： 增加一条章节记录(字段可为空)   -->
+	<insert id="addChapter" parameterType="Chapter">
+		insert into chapter
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="chapterId != null"> chapter_id, </if>
+			<if test="courseId != null"> course_id, </if>
+			<if test="chapterOrder != null"> chapter_order, </if>
+			<if test="chapterTitle != null"> chapter_title </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="chapterId != null">  #{chapterId,jdbcType=INTEGER}, </if>
+			<if test="courseId != null"> #{courseId,jdbcType=INTEGER}, </if>
+			<if test="chapterOrder != null"> #{chapterOrder,jdbcType=INTEGER}, </if>
+			<if test="chapterTitle != null"> #{chapterTitle,jdbcType=VARCHAR} </if>
+		</trim>
+	</insert>
+	
+	<!-- 删除章节:	通过章节id  删除一条章节记录   -->
+	 <delete id="deleteChapter" parameterType="int" >  
+	   delete from chapter  
+	   where chapter_id = #{chapterId,jdbcType=INTEGER}  
+	 </delete>  
+	 
+	 <!-- 更新sql:  -->
+	 <update id="updateChapter" parameterType="Chapter" >  
+	   update chapter  
+	   <set >   
+	     <if test="courseId != null" >  
+	       course_id = #{courseId,jdbcType=INTEGER},  
+	     </if> 
+	     <if test="chapterOrder != null" >  
+	       chapter_order = #{chapterOrder,jdbcType=INTEGER},  
+	     </if>  
+	     <if test="chapterTitle != null" >  
+	       chapter_title = #{chapterTitle,jdbcType=VARCHAR}
+	     </if>
+	   </set>  
+	   where chapter_id = #{chapterId,jdbcType=INTEGER}  
+	 </update>
+	
+</mapper>  

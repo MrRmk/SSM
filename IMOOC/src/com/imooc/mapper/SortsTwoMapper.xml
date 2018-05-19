@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.ISortsTwoDao" >
+ 
+  <!--如下type的SortsTwo就是mybatis-config.xml中配置的SortsTwo-->  
+  <resultMap id="BaseResultMap" type="SortsTwo" >  
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  --> 
+    <id column="sorts_two_id" property="twoId" jdbcType="INTEGER" />  
+    <result column="sorts_two_name" property="twoName" jdbcType="VARCHAR" />  
+    <result column="sorts_two_code" property="twoCode" jdbcType="VARCHAR" />
+    <result column="sorts_one_id" property="oneId" jdbcType="INTEGER" />
+    
+    <!-- 一对一：二级分类表中包含一级分类表 -->
+    <!-- 
+    	property就是Chapter实体类里面包含的小节list对象; 
+    	ofType就是包含的对象的映射路径，即包名+类名,此处由于在mybatis-config.xml中配置过，所以直接用user-->
+    <association property="sortsOne" javaType="com.imooc.entity.SortsOne">  
+    	<id column="sorts_one_id" property="oneId" jdbcType="INTEGER" />  
+	    <result column="sorts_one_name" property="oneName" jdbcType="VARCHAR" />  
+	    <result column="sorts_one_code" property="oneCode" jdbcType="VARCHAR" />   
+    </association>
+        
+  </resultMap>  
+  
+	<!--查询sql:  查询二级分类表的所有数据  -->  
+	<!-- 查询结果为list集合 或者查询有参数  返回类型用resultMap  -->
+  <select id="selectAllSortsTwo" resultMap="BaseResultMap">  
+    SELECT * 
+	FROM course_sorts_two s2,course_sorts_one s1
+	where s2.sorts_one_id = s1.sorts_one_id
+	ORDER BY s2.sorts_one_id, s2.sorts_two_id
+  </select>  
+  
+  <sql id="Base_Column_List" >  
+    sorts_two_id, sorts_two_name, sorts_two_code, sorts_one_id
+  </sql>  
+  
+  <!-- 查询sql:	通过二级分类id 查询二级分类表   -->
+  <select id="getSortsTwo" resultMap="BaseResultMap" parameterType="java.lang.Integer" >  
+    select   
+    <include refid="Base_Column_List" />  
+    from course_sorts_two  
+    where sorts_two_id = #{twoId,jdbcType=INTEGER}  
+  </select>  
+  
+  <!-- 查询sql:  通过二级分类编码查找   二级分类表 对象      (来获得二级分类名字) -->
+  <select id="getSortsTwoByTwoCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select   
+    <include refid="Base_Column_List" />  
+    from course_sorts_two  
+    where sorts_two_code = #{twoCode,jdbcType=VARCHAR}  
+  </select>
+  
+  <!-- 查询sql:  通过一级分类id查找   二级分类表的集合 -->
+  <select id="getAllSortsTwoByOneId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select   
+    <include refid="Base_Column_List" />  
+    from course_sorts_two
+    where sorts_one_id = #{oneId,jdbcType=INTEGER}  
+  </select>
+  
+  <!-- 删除sql:	通过二级分类id 删除二级分类表   -->
+  <delete id="deleteSortsTwo" parameterType="java.lang.Integer" >  
+    delete from course_sorts_two  
+    where sorts_two_id = #{twoId, jdbcType=INTEGER}  
+  </delete> 
+  
+  <!-- 添加sql:	添加二级分类表数据   -->
+  <insert id="insert" parameterType="SortsTwo" >  
+    insert into course_sorts_two (sorts_two_id, sorts_two_name, sorts_two_code, sorts_one_id)  
+    values (#{twoId,jdbcType=INTEGER}, #{twoName,jdbcType=VARCHAR}, 
+    		#{twoCode,jdbcType=VARCHAR}, #{oneId,jdbcType=INTEGER}   
+      )  
+  </insert> 
+   
+  <!-- 添加sql:	添加二级分类表数据   -->
+  <insert id="addSortsTwo" parameterType="SortsTwo" >  
+    insert into course_sorts_two  
+    <trim prefix="(" suffix=")" suffixOverrides="," >  
+      <if test="twoId != null" >  
+        sorts_two_id,  
+      </if>  
+      <if test="twoName != null" >  
+        sorts_two_name,  
+      </if>  
+      <if test="twoCode != null" >  
+        sorts_two_code,  
+      </if>  
+      <if test="oneId != null" >  
+        sorts_one_id  
+      </if>  
+    </trim>  
+    <trim prefix="values (" suffix=")" suffixOverrides="," >  
+      <if test="twoId != null" >  
+        #{twoId,jdbcType=INTEGER},  
+      </if>  
+      <if test="twoName != null" >  
+        #{twoName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="twoCode != null" >  
+        #{twoCode,jdbcType=VARCHAR},  
+      </if> 
+      <if test="oneId != null" >  
+        #{oneId,jdbcType=INTEGER}  
+      </if>  
+    </trim>  
+  </insert>  
+  
+  <!-- 更新sql:  -->
+  <update id="updateSortsTwo" parameterType="SortsTwo" >  
+    update course_sorts_two  
+    <set >  
+      <if test="twoName != null" >  
+        sorts_two_name = #{twoName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="twoCode != null" >  
+        sorts_two_code = #{twoCode,jdbcType=VARCHAR},  
+      </if> 
+    </set>  
+    where sorts_two_id = #{twoId,jdbcType=INTEGER}  
+  </update>
+    
+  <!-- 更新sql:  -->
+  <update id="updateByPrimaryKey" parameterType="SortsTwo" >  
+    update course_sorts_two  
+    set sorts_two_name = #{twoName,jdbcType=VARCHAR}, 
+        sorts_two_code = #{twoCode,jdbcType=VARCHAR},
+        sorts_one_id = #{oneId,jdbcType=INTEGER}
+    where sorts_two_id = #{twoId,jdbcType=INTEGER}  
+  </update>  
+  
+  
+</mapper>  

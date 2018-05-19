@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.ICourseDao" >
+ 
+  <!--如下type的Course就是mybatis-config.xml中配置的Course-->  
+  <resultMap id="BaseResultMap" type="Course" >  
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  --> 
+    <id column="course_id" property="courseId" jdbcType="INTEGER" />  
+    <result column="sorts_two_id" property="twoId" jdbcType="INTEGER" />  
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="course_summary" property="courseSummary" jdbcType="VARCHAR" />   
+    <result column="course_grade" property="courseGrade" jdbcType="VARCHAR" /> 
+    <result column="course_totaltime" property="courseTotalTime" jdbcType="INTEGER" />  
+    <result column="course_isproject" property="courseIsProject" jdbcType="INTEGER" />  
+    <result column="course_price" property="coursePrice" jdbcType="INTEGER" />  
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />  
+    <result column="course_status" property="courseStatus" jdbcType="INTEGER" />  
+  </resultMap>  
+  
+	<!--查询sql:  查询所有的课程表的数据  -->  
+	<!-- 查询结果为list集合 或者查询有参数  返回类型用resultMap  -->
+  <select id="selectAllCourse" resultMap="BaseResultMap">  
+    select * FROM course
+  </select>
+  
+  <!--查询sql:  查询所有的课程表(在架)的数据  -->  
+  <select id="selectAllOnlineCourse" resultMap="BaseResultMap">  
+    select * FROM course
+    where course_status = 1  
+  </select>
+  
+  <!--分页查询sql:  查询所有的课程表(在架)数据的总个数  -->  
+  <select id="selectAllOnlineCourseNumber" resultType="int">  
+    select count(*) FROM course
+    where course_status = 1  
+  </select>
+  
+  <!--分页查询sql:  查询所有的课程表(在架)的分页数据  -->  
+  <select id="selectAllOnlineCoursePage" resultMap="BaseResultMap">  
+    select * FROM course
+    where course_status = 1  
+    limit #{first},#{pageSize} 
+  </select>
+  
+  <!--查询sql: 查询**课程列表中实战的前五条(在架)数据****实战推荐  -->  
+  <select id="selectAllCourseProjectFirstFive" resultMap="BaseResultMap">  
+    select * FROM course
+	where course_isproject = 1 and course_status = 1
+	LIMIT 5;  
+  </select>
+  
+  <!--查询sql: 查询**课程列表中免费的前五条(在架)数据****免费好课  -->  
+  <select id="selectAllCourseFirstFive" resultMap="BaseResultMap">  
+    select * FROM course
+	where course_isproject = 0 and course_status = 1
+	LIMIT 5;  
+  </select>
+  
+  <!--查询sql:  查询**课程列表中有关Java的(免费)(在架)课程*****Java开发工程师  -->  
+  <select id="selectAllJavaCourse" resultMap="BaseResultMap">  
+    select course.* FROM course, course_sorts_two
+	where 
+	<!-- course_isproject = 0 and  -->
+	course_sorts_two.sorts_two_id = course.sorts_two_id
+	and course_sorts_two.sorts_two_name = 'Java'
+	and course_status = 1
+  </select>
+  
+  <sql id="Base_Column_List" >  
+    course_id, sorts_two_id, course_name, course_summary, course_grade,
+    course_totaltime, course_isproject, course_price, user_id, course_status 
+  </sql>  
+  
+  <!-- 查询sql:	通过课程id 获得一个课程表 对象   -->
+  <select id="getCourse" resultMap="BaseResultMap" parameterType="java.lang.Integer" >  
+    select * from course  
+    where course_id = #{courseId,jdbcType=INTEGER}  
+  </select>  
+  
+  <!-- 分页查询sql:  通过二级分类id查找   课程表分页的集合   -->
+  <select id="getAllCourseByTwoId" resultMap="BaseResultMap">
+  	select *  from course  
+    where sorts_two_id = #{twoId,jdbcType=INTEGER}  
+    and course_status = 1
+    limit #{first},#{pageSize} 
+  </select>
+  
+  <!-- 分页查询sql:  通过二级分类id查找   课程表分页的集合的总个数   -->
+  <select id="getAllCourseNumberByTwoId" resultType="int">
+  	select count(*)  from course  
+    where sorts_two_id = #{twoId,jdbcType=INTEGER}  
+    and course_status = 1
+  </select>
+  
+  <!-- 分页查询sql:  通过一级分类编码查询  分页的课程表的集合   -->
+  <select id="getAllCoursePageByOneCode" resultMap="BaseResultMap">
+  	SELECT c.*
+	from course c
+	where c.sorts_two_id in(
+				SELECT two.sorts_two_id
+				from course_sorts_two two
+				where two.sorts_one_id in(
+							SELECT one.sorts_one_id
+							from course_sorts_one one
+							where  one.sorts_one_code = #{oneCode}
+				)
+	)
+	and course_status = 1
+    limit #{first},#{pageSize}
+  </select>
+  
+  <!-- 分页查询sql:  通过一级分类编码查询  分页的课程表集合的总个数   -->
+  <select id="getAllCoursePageNumberByOneCode" resultType="int">
+  	SELECT count(*)
+	from course c
+	where c.sorts_two_id in(
+				SELECT two.sorts_two_id
+				from course_sorts_two two
+				where two.sorts_one_id in(
+							SELECT one.sorts_one_id
+							from course_sorts_one one
+							where  one.sorts_one_code = #{oneCode}
+				)
+	)
+	and course_status = 1
+  </select>
+  
+  
+  <!-- 模糊查询sql:  通过课程名   来模糊查询   分页的课程表的集合   -->
+  <select id="getAllCourseByCourseName" resultMap="BaseResultMap">
+  	select * from course  
+  	<where>
+  		<if test="courseName != null and courseName != '' ">
+  			course_name like '%${courseName}%'
+  		</if>
+  	</where>
+    limit #{first},#{pageSize}
+  </select>
+  
+  <!-- 模糊查询sql:  通过课程名   来模糊查询   课程表集合的总个数   -->
+  <select id="getAllCourseNumberByCourseName" resultType="int">
+  	select count(*) from course  
+  	<where>
+  		<if test="courseName != null and courseName != '' ">
+  			course_name like '%${courseName}%'
+  		</if>
+  	</where>
+  </select>
+  
+  <!-- 模糊查询sql:  通过一级分类+ 课程名模糊查询  分页的课程表的集合   -->
+  <select id="getAllCourseByOneCodeAndCourseName" resultMap="BaseResultMap">
+  	SELECT c.*
+	from course c
+	where c.sorts_two_id in(
+				SELECT two.sorts_two_id
+				from course_sorts_two two
+				where two.sorts_one_id in(
+							SELECT one.sorts_one_id
+							from course_sorts_one one
+							where  one.sorts_one_code = #{oneCode}
+				)
+		 <if test="courseName != null and courseName != '' ">
+			and c.course_name like '%${courseName}%'	
+		 </if>
+	)
+    limit #{first},#{pageSize}
+  </select>
+  
+  <!-- 模糊查询sql:  通过一级分类+ 课程名模糊查询 课程表集合的总个数   -->
+  <select id="getAllCourseNumberByOneCodeAndCourseName" resultType="int">
+  	SELECT count(*)
+	from course c
+	where c.sorts_two_id in(
+				SELECT two.sorts_two_id
+				from course_sorts_two two
+				where two.sorts_one_id in(
+							SELECT one.sorts_one_id
+							from course_sorts_one one
+							where  one.sorts_one_code = #{oneCode}
+				)
+		 <if test="courseName != null and courseName != '' ">
+			and c.course_name like '%${courseName}%'	
+		 </if>
+	)
+  </select>
+  
+  
+  <!-- 查询sql: 通过课程id 查询课程总时长 -->
+  <select id="selectCourseTotalTimeSecond" resultType="int" parameterType="int"> 
+  	SELECT IFNULL(sum(video_totaltime_second),0)
+	from small_chapter
+	where chapter_id in(
+				SELECT chapter_id
+				from chapter
+				where course_id = #{courseId, jdbcType=INTEGER}  
+	)
+  </select>
+  
+  <!-- 删除sql:	通过课程id 删除课程表   -->
+  <delete id="deleteCourse" parameterType="java.lang.Integer" >  
+    delete from course  
+    where course_id = #{courseId, jdbcType=INTEGER}  
+  </delete> 
+   
+  <!-- 添加sql:	添加课程表数据   -->
+  <insert id="addCourse" parameterType="int" >  
+    insert into course  
+    <trim prefix="(" suffix=")" suffixOverrides="," >   
+      <if test="twoId != null" >   sorts_two_id,   </if>  
+      <if test="courseName != null" >   course_name,   </if>  
+      <if test="courseSummary != null" >  course_summary,   </if>
+      <if test="courseGrade != null" >   course_grade,   </if>  
+      <if test="courseTotalTime != null" >   course_totaltime,  </if>  
+      <if test="courseIsProject != null" >   course_isproject,   </if> 
+      <if test="coursePrice != null" >   course_price,   </if>  
+      <if test="userId != null" >   user_id,   </if>   
+      <if test="courseStatus != null" >   course_status   </if>  
+    </trim>  
+    <trim prefix="values (" suffix=")" suffixOverrides="," >  
+      <if test="twoId != null" >   #{twoId,jdbcType=INTEGER},   </if>  
+      <if test="courseName != null" >   #{courseName,jdbcType=VARCHAR},   </if>  
+      <if test="courseSummary != null" >   #{courseSummary,jdbcType=VARCHAR},   </if> 
+      <if test="courseGrade != null" >   #{courseGrade,jdbcType=VARCHAR},   </if>  
+      <if test="courseTotalTime != null" >   #{courseTotalTime,jdbcType=INTEGER}, </if>  
+      <if test="courseIsProject != null" >  #{courseIsProject,jdbcType=INTEGER}, </if>  
+      <if test="coursePrice != null" >  #{coursePrice,jdbcType=INTEGER},  </if> 
+      <if test="userId != null" >  #{userId,jdbcType=VARCHAR},  </if> 
+      <if test="courseStatus != null" >  #{courseStatus,jdbcType=INTEGER}  </if> 
+    </trim>  
+  </insert> 
+  
+  <!-- 更新sql:  -->
+  <update id="updateCourse" parameterType="Course" >  
+    update course  
+    <set >  
+      <if test="twoId != null" >  
+        sorts_two_id = #{twoId,jdbcType=INTEGER},  
+      </if>  
+      <if test="courseName != null" >  
+        course_name = #{courseName,jdbcType=VARCHAR},  
+      </if> 
+      <if test="courseSummary != null" >  
+        course_summary = #{courseSummary,jdbcType=VARCHAR},  
+      </if> 
+      <if test="courseGrade != null" >  
+        course_grade = #{courseGrade,jdbcType=VARCHAR},  
+      </if>  
+      <if test="courseTotalTime != null" >  
+        course_totaltime = #{courseTotalTime,jdbcType=INTEGER},  
+      </if> 
+      <if test="courseIsProject != null" >  
+        course_isproject = #{courseIsProject,jdbcType=INTEGER},  
+      </if> 
+      <if test="coursePrice != null" >  
+        course_price = #{coursePrice,jdbcType=INTEGER},  
+      </if>  
+      <if test="userId != null" >  
+        user_id = #{userId,jdbcType=VARCHAR}, 
+      </if>   
+      <if test="courseStatus != null" >  
+        course_status = #{courseStatus,jdbcType=INTEGER} 
+      </if>   
+    </set>  
+    where course_id = #{courseId,jdbcType=INTEGER}  
+  </update>
+      
+  
+  
+</mapper>  

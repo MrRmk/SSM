@@ -1,0 +1,319 @@
+﻿/****************me.html我的页面的CSS样式**************************/
+body {
+	margin: 0;
+	padding: 0;
+}
+.clearfix {
+    clear: both;
+}
+.static-item div{
+    font: 14px/1.5 arial,"Microsoft Yahei","Hiragino Sans GB",sans-serif;
+}
+div{
+    color: #4d555d;
+}
+a span{
+    color: #4d555d;
+}
+/*****************主要内容 main页面************************************************************************/
+.main {
+    display: block;
+    padding: 0;
+    min-height: 750px;
+}
+/* 主内容面板 */
+.content-wrap {
+    position: relative;
+    width: 1200px;
+    margin: 0 auto; 
+    overflow: hidden;
+    min-height: 400px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+/*************页面左边******************************************************************************************************/
+.setting-left {
+    width: 220px;
+    background-color: #f8fafc;
+    float: left;
+    text-align: center;
+    padding: 30px 0px;
+}
+.setting-header {
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    border: 3px solid #CCC;
+}
+img {
+    vertical-align: middle;
+    border: 0;
+}
+.split-line {
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid #d9dde1;
+    margin: 40px 0px;
+}
+.user-menu-nav-block {
+    text-align: left;
+    width: 100%;
+    padding: 0px;
+}
+ul {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+ul a {
+    text-decoration: none;
+    /* display: block; */
+    outline: none;
+}
+.user-menu-nav-cur {/*选中*/
+    background-color: #0089D2;
+    color: #FFF;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 50px;
+    padding-right: 30px;
+    margin-bottom: 10px;
+}
+.user-menu-nav {/*未选中*/
+    height: 50px;
+    line-height: 50px;
+    padding-left: 50px;
+    padding-right: 30px;
+    margin-bottom: 10px;
+}
+li {
+    list-style-type: none;
+}
+.user-menu-nav-cur span {
+    float: right;
+    display: inline-block;
+    height: 50px;
+    line-height: 50px;
+    color: #FFF;
+}
+.user-menu-nav span {
+    float: right;
+    display: inline-block;
+    height: 50px;
+    line-height: 50px;
+}
+.user-menu-nav:hover {
+    background-color: #E6E6E6;
+    color: blue;
+}
+a:focus, a:hover {
+    color: #23527c;
+    outline: 0px;
+    text-decoration: underline;
+}
+
+a:active, a:hover {
+    outline: 0;
+}
+
+/*************页面右边******************************************************************************************************/
+.setting-right {
+    width: 930px;
+    float: right;
+}
+.f-16 {
+    font-size: 16px;
+}
+.comment {
+    padding: 0px 10px 20px 10px;
+    border-bottom: 1px solid #eee;
+    margin: 20px 0px;
+    min-height: 120px;
+}
+.comment-header {
+    float: left;
+    width: 70px;
+}
+.comment-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+img {
+    vertical-align: middle;
+}
+.comment-main {
+    float: right;
+    width: 730px;
+}
+.comment-main .user-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+.comment-main .comment-content {
+    margin-top: 20px;
+    width: 100%;
+}
+.comment-main .comment-footer {
+    margin-top: 20px;
+}
+a:link {
+    text-decoration: none;
+}
+.page-box {
+    padding: 40px 0px 20px 0px;
+    text-align: center;
+}
+
+/*用iframe之后嵌入的页面所需样式——me-home.html************************************************************************************/
+.me-content{
+    height: 100%;
+}
+.link-a {
+    color: #4d555d;
+    text-decoration: none;
+}
+.learn-rate {
+    color: #F0145D;
+    margin-right: 20px;
+}
+/*用iframe之后嵌入的页面所需样式——me-message.html************************************************************************************/
+.oc-form {
+    padding-left: 20px;
+}
+.btn {
+    width: 80px;
+    background-color: #0089D2;
+    text-align: center;
+    color: #FFF;
+    border-radius: 4px;
+}
+.oc-form li {
+    height: 40px;
+    line-height: 40px;
+    padding-right: 30px;
+    /* margin-bottom: 15px; */
+    clear: both;
+}
+.oc-form li label {
+    width: 150px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    margin-right: 20px;
+    background-color: #F3F5F7;
+    display: inline-block;
+    float: left;
+}
+.oc-form li .input-text2 {
+    float: left;
+    height: 40px;
+    line-height: 40px;
+    width: 60%;
+    padding-left: 5px;
+    border: none;
+    border-bottom: 1px solid #d9dde1;
+}
+
+.oc-form li .input-select {
+    float: left;
+    height: 40px;
+    line-height: 40px;
+    width: 60%;
+    padding-left: 5px;
+    border: 1px solid #d9dde1;
+}
+input, textarea, select {
+    outline: none;
+}
+/*用iframe之后嵌入的页面所需样式——me-answer.html************************************************************************************/
+.comment-main .comment-footer a {
+    margin-left: 100px;
+    display: inline-block;
+    color: #93999f;
+}
+.continue-btn:hover {
+    background-color: #0089D2;
+    color: #FFF;
+}
+.continue-btn {
+    display: inline-block;
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #0089D2;
+    text-align: center;
+    cursor: pointer;
+    color: #000;
+}
+
+
+/*me-answer.jsp************************************************************************************/
+.setting-right .course-menu {
+    width: 100%;
+    padding: 0px 0px 20px 0px;
+    border-bottom: 1px solid #d9dde1;
+}
+
+
+/*me-note.jsp标签分类************************************************************************************/
+.pl-list-btm .moco-label{
+    margin-right: 16px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: #545c63;
+    line-height: 16px;
+    background: rgba(84,92,99,0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 0px;
+}
+.pl-list-btm .moco-label a{
+    color: #1c1f21;
+    font: 12px/1.5 "PingFang SC","微软雅黑","Microsoft YaHei",Helvetica,"Helvetica Neue",Tahoma,Arial,sans-serif;
+}
+/* me-message.jsp页面的样式************************************************************************************/
+.message-edit{
+	color: #A9A9A9;
+}
+.message-edit:hover{
+	color: #337ab7;
+}
+
+/* me-home.jsp页面的样式 ************************************************************************************/
+.course-meta {
+    margin-top: 30px;
+    text-align: center;
+}
+.learn-btn {
+    display: inline-block;
+    border-radius: 4px;
+    text-align: center;
+    background-color: #0089D2;
+    color: #FFF;
+    width: 137px;
+    height: 48px;
+    line-height: 48px;
+    font-size: 16px;
+    position: relative;
+    top: -20px;
+}
+.course-meta .static-item {
+    display: inline-block;
+    padding: 0 33px;
+    font-size: 12px;
+    border-right: 1px solid #d9dde1;
+}
+.course-meta .static-item .meta {
+    height: 25px;
+    line-height: 30px;
+}
+.course-meta .static-item .meta-value {
+    font-size: 16px;
+    height: 25px;
+    line-height: 25px;
+    overflow: hidden;
+    max-width: 180px;
+}
+

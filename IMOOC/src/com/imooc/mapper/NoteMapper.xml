@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.INoteDao" >
+   
+   <!--如下type的Note就是mybatis-config.xml中配置的Note-->  
+  <resultMap id="BaseResultMap" type="Note" > 
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+    <id column="note_id" property="noteId" jdbcType="INTEGER" />  
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />  
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />  
+    <result column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />
+    <result column="note_title" property="noteTitle" jdbcType="VARCHAR" />
+    <result column="note_content" property="noteContent" jdbcType="VARCHAR" />
+    <result column="note_time" property="noteTime" jdbcType="TIMESTAMP" />
+    <result column="note_thumbs_number" property="noteThumbsNumber" jdbcType="INTEGER" />
+    
+    <!-- 一对一：评论表中包含用户表 -->
+    <!-- collection中不是javaType而是ofType,通过property也知道是list，即多个 ; 
+    	property就是Chapter实体类里面包含的小节list对象; 
+    	ofType就是包含的对象的映射路径，即包名+类名,此处由于在mybatis-config.xml中配置过，所以直接用user-->
+    <association property="user" javaType="com.imooc.entity.User">  
+    	<id column="user_id" property="userId" jdbcType="VARCHAR" />  
+	    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />  
+	    <result column="user_photo" property="userPhoto" jdbcType="VARCHAR" />  
+	    <result column="user_nickname" property="userNickName" jdbcType="VARCHAR" />  
+	    <result column="user_realname" property="userRealName" jdbcType="VARCHAR" />  
+	    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />  
+	    <result column="user_summary" property="userSummary" jdbcType="VARCHAR" />  
+	    <result column="user_qq" property="userQQ" jdbcType="VARCHAR" />  
+	    <result column="user_school" property="userSchool" jdbcType="VARCHAR" />  
+	    <result column="user_education" property="userEducation" jdbcType="VARCHAR" />  
+	    <result column="user_qualification" property="userQualification" jdbcType="VARCHAR" />  
+	    <result column="user_position" property="userPosition" jdbcType="VARCHAR" />  
+	    <result column="user_register_time" property="userRegisterTime" jdbcType="TIMESTAMP" /> 
+	    <result column="user_status" property="userStatus" jdbcType="INTEGER" />   
+	</association>
+	
+    <!-- 一对一：评论表中包含小节表 -->
+    <!-- <association property="smallChapter" javaType="com.imooc.entity.SmallChapter">
+    	<id column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />  
+    	<result column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+    	<result column="small_chapter_order" property="smallChapterOrder" jdbcType="INTEGER" />  
+    	<result column="small_chapter_title" property="smallChapterTitle" jdbcType="VARCHAR" />  
+    	<result column="video_path" property="videoPath" jdbcType="VARCHAR" />
+    	<result column="video_totaltime" property="videoTotalTime" jdbcType="VARCHAR" />
+	</association> --> 
+	
+	<!-- 一对一：评论表中包含章节表 -->
+    <!-- <association property="chapter" javaType="com.imooc.entity.Chapter">
+    	<id column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+	    <result column="course_id" property="courseId" jdbcType="INTEGER" />  
+	    <result column="chapter_order" property="chapterOrder" jdbcType="INTEGER" />  
+	    <result column="chapter_title" property="chapterTitle" jdbcType="VARCHAR" />
+	</association> -->
+    
+  </resultMap> 
+   
+	<!--查询sql:  查询所有的笔记表的数据  -->  
+	<select id="selectAllNote" resultMap="BaseResultMap">  
+	  	select * FROM note
+	  	order by note_time DESC, note_thumbs_number DESC 
+	</select> 
+	
+	<!--查询sql:  查询所有的笔记表的数据(关联了笔记表+用户表)*****分页  -->  
+	<select id="selectAllNoteAndUser" resultMap="BaseResultMap">  
+	  	select n.*, u.* 
+	  	FROM note n, user u
+	  	where n.user_id = u.user_id
+	  	order by note_time DESC, note_thumbs_number DESC 
+	  	limit #{first},#{pageSize}
+	</select>
+	
+	<!--查询sql:  查询所有的笔记表的数据的总页数   -->  
+	<select id="selectAllNoteAndUserTotal" resultType="int">  
+	  	select count(*) 
+	  	FROM note n, user u
+	  	where n.user_id = u.user_id
+	</select>  
+  
+	<sql id="Base_Column_List" >  
+	  	note_id, user_id, course_id, small_chapter_id, note_title, note_content, note_time, note_thumbs_number 
+	</sql>  
+	
+	<!--查询sql:  通过用户id  获取该用户所有的笔记(关联了笔记表+用户表)  -->  
+	<select id="selectAllNoteByUserId" resultMap="BaseResultMap" parameterType="java.lang.String">  
+	  	select n.*, u.* 
+	  	FROM note n, user u
+	  	where n.user_id = u.user_id and u.user_id = #{userId,jdbcType=VARCHAR} 
+	  	order by note_time DESC, note_thumbs_number DESC 
+	</select> 
+	
+	<!--查询sql:  通过用户id  获取该用户所有的笔记总个数(关联了笔记表+用户表)  -->  
+	<select id="getNoteNumberByUserId" resultType="int" parameterType="java.lang.String">  
+	  	select count(*) 
+	  	FROM note n, user u
+	  	where n.user_id = u.user_id and u.user_id = #{userId,jdbcType=VARCHAR} 
+	</select>  
+  
+	<!-- 查询sql:  通过笔记id 获得一个笔记表 对象   -->
+	<select id="getNote" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select   
+		<include refid="Base_Column_List" />  
+		from note  
+		where note_id = #{noteId,jdbcType=INTEGER}  
+	</select>  
+	
+	<!-- 查询sql:  通过课程id查找   笔记表的集合(关联了笔记表+用户表+小节表+章节表)      -->
+	<select id="getAllNoteByCourseId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		<!-- 原生的:只有提问表数据，没有关联其他表 -->
+		<!-- select *
+		from note  
+		where course_id = #{courseId,jdbcType=INTEGER} order by note_time DESC, note_thumbs_number DESC -->
+		
+		<!-- 关联了笔记表+用户表+小节表+章节表 -->
+		select n.*, u.*, small.* , chapter.*
+		from note n, user u, small_chapter small,chapter
+		where n.course_id = #{courseId,jdbcType=INTEGER} and n.user_id = u.user_id and n.small_chapter_id = small.small_chapter_id and chapter.chapter_id = small.chapter_id
+		order by n.note_time DESC, n.note_thumbs_number DESC
+	</select> 
+	
+	<!-- 查询sql:  通过课程id查找   笔记表的集合(关联了笔记表+用户表)      -->
+	<select id="getNoteByCourseId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		<!-- 关联了评论表+用户表 -->
+		select n.*, u.*
+		from note n, user u
+		where n.course_id = #{courseId,jdbcType=INTEGER} and n.user_id = u.user_id
+		order by n.note_time DESC, n.note_thumbs_number DESC
+	</select> 
+	
+	<!-- 查询sql:  通过课程id和小节id查找   笔记表的集合      -->
+	<select id="getAllNoteByCourseIdAndSmallChapterId" resultMap="BaseResultMap">
+		select   
+		<include refid="Base_Column_List" />  
+		from note  
+		where course_id = #{courseId,jdbcType=INTEGER} and small_chapter_id = #{smallChapterId,jdbcType=INTEGER} 
+	</select> 
+	
+	<!-- 查询sql:  通过课程id查找   该课程的笔记数量      -->
+	<select id="getNoteNumberByCourseId" resultType="int" parameterType="int">
+		select count(*)
+		from note  
+		where course_id = #{courseId,jdbcType=INTEGER} 
+	</select> 
+
+	<!-- 添加笔记： 增加一条笔记记录(字段可为空)   -->
+	<insert id="addNote" parameterType="Note">
+		insert into note
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="noteId != null"> note_id, </if>
+			<if test="userId != null"> user_id, </if>
+			<if test="courseId != null"> course_id, </if>
+			<if test="smallChapterId != null"> small_chapter_id, </if>
+			<if test="noteTitle != null"> note_title, </if>
+			<if test="noteContent != null"> note_content, </if>
+			<if test="noteTime != null"> note_time, </if>
+			<if test="noteThumbsNumber != null"> note_thumbs_number, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="noteId != null">  #{noteId,jdbcType=INTEGER}, </if>
+			<if test="userId != null"> #{userId,jdbcType=VARCHAR}, </if>
+			<if test="courseId != null"> #{courseId,jdbcType=INTEGER}, </if>
+			<if test="smallChapterId != null"> #{smallChapterId,jdbcType=INTEGER}, </if>
+			<if test="noteTitle != null"> #{noteTitle,jdbcType=VARCHAR}, </if>
+			<if test="noteContent != null"> #{noteContent,jdbcType=VARCHAR}, </if>
+			<if test="noteTime != null"> #{noteTime,jdbcType=TIMESTAMP}, </if>
+			<if test="noteThumbsNumber != null"> #{noteThumbsNumber,jdbcType=INTEGER}, </if>
+		</trim>
+	</insert>
+	
+	<!-- 删除笔记:	通过笔记id  删除一条笔记记录   -->
+	 <delete id="deleteNote" parameterType="int" >  
+	   delete from note
+	   where note_id = #{noteId,jdbcType=INTEGER}  
+	 </delete>  
+	 
+	 <!-- 更新sql:  -->
+	 <update id="updateNote" parameterType="Note" >  
+	   update note  
+	   <set >   
+	     <if test="userId != null" >  
+	       user_id = #{userId,jdbcType=VARCHAR},  
+	     </if>  
+	     <if test="courseId != null" >  
+	       course_id = #{courseId,jdbcType=INTEGER},  
+	     </if> 
+	     <if test="smallChapterId != null" >  
+	       small_chapter_id = #{smallChapterId,jdbcType=INTEGER},  
+	     </if>  
+	     <if test="noteTitle != null" >  
+	       note_title = #{noteTitle,jdbcType=VARCHAR},  
+	     </if>
+	     <if test="noteContent != null" >  
+	       note_content = #{noteContent,jdbcType=VARCHAR},  
+	     </if>
+	     <if test="noteTime != null" >  
+	       note_time = #{noteTime,jdbcType=TIMESTAMP},  
+	     </if> 
+	     <if test="noteThumbsNumber != null" >  
+	       note_thumbs_number = #{noteThumbsNumber,jdbcType=INTEGER},  
+	     </if> 
+	   </set>  
+	   where note_id = #{noteId,jdbcType=INTEGER}  
+	 </update>
+
+	<!-- 更新sql: 点赞  通过笔记id  将笔记  点赞量+1 -->
+	 <update id="updateNoteThumbsUp" parameterType="int" >  
+	 	update note
+		set note_thumbs_number = note_thumbs_number + 1
+		where note_id = #{noteId,jdbcType=INTEGER}  
+	 </update>
+	
+</mapper>  

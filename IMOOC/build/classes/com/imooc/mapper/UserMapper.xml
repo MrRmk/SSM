@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.IUserDao" >  
+  
+  <!--如下type的User就是mybatis-config.xml中配置的user-->  
+  <resultMap id="BaseResultMap" type="User" >  
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />  
+    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />  
+    <result column="user_photo" property="userPhoto" jdbcType="VARCHAR" />  
+    <result column="user_nickname" property="userNickName" jdbcType="VARCHAR" />  
+    <result column="user_realname" property="userRealName" jdbcType="VARCHAR" />  
+    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />  
+    <result column="user_summary" property="userSummary" jdbcType="VARCHAR" />  
+    <result column="user_qq" property="userQQ" jdbcType="VARCHAR" />  
+    <result column="user_school" property="userSchool" jdbcType="VARCHAR" />  
+    <result column="user_education" property="userEducation" jdbcType="VARCHAR" />  
+    <result column="user_qualification" property="userQualification" jdbcType="VARCHAR" />  
+    <result column="user_position" property="userPosition" jdbcType="VARCHAR" /> 
+    <result column="user_register_time" property="userRegisterTime" jdbcType="TIMESTAMP" />  
+    <result column="user_status" property="userStatus" jdbcType="INTEGER" />  
+    
+  </resultMap>  
+  
+  <!--如下type的User就是mybatis-config.xml中配置的user-->  
+  <resultMap id="UserDateNumberMap" type="UserDateNumber" >  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+    <result column="countNumber" property="countNumber" jdbcType="INTEGER" /> 
+    <result column="dateTime" property="dateTime" jdbcType="VARCHAR" />  
+  </resultMap> 
+  
+  <!-- 查询sql:	查询最近一周内的用户注册人数   -->
+  <select id="getUserDateNumber" resultMap="UserDateNumberMap">  
+    <!-- 版本1：查询最近一周的用户注册人数，如果当天没有人数就查询不到当天的，所以数据可能不是七天的 -->
+    <!-- SELECT  
+	COUNT(1) AS countNumber,  
+	DATE_FORMAT(user_register_time,'%m-%d') AS dateTime  
+	FROM  
+	    (select * from user  where DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(user_register_time)) a
+	GROUP BY DATE_FORMAT(user_register_time,'%Y-%m-%d')     -->
+		
+	<!-- 版本2：查询最近一周的用户注册人数，如果当天没有人数的话，就把当天人数补充为0，时间显示格式：mm-dd(月-日) -->
+	select IFNULL(b.countNumber,0) as countNumber,DATE_FORMAT(a.click_date,'%m-%d') AS dateTime 
+	from (
+	    SELECT CURDATE() as click_date
+	    union all
+	    SELECT date_sub(CURDATE(), interval 1 day) as click_date
+	    union all
+	    SELECT date_sub(CURDATE(), interval 2 day) as click_date
+	    union all
+	    SELECT date_sub(CURDATE(), interval 3 day) as click_date
+	    union all
+	    SELECT date_sub(CURDATE(), interval 4 day) as click_date
+	    union all
+	    SELECT date_sub(CURDATE(), interval 5 day) as click_date
+	    union all
+	    SELECT date_sub(CURDATE(), interval 6 day) as click_date
+	) a left join (
+							SELECT  
+							COUNT(1) AS countNumber,  
+							DATE_FORMAT(user_register_time,'%Y-%m-%d') AS dateTime  
+							FROM  
+									(select * from user  where DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(user_register_time)) d
+									GROUP BY DATE_FORMAT(user_register_time,'%Y-%m-%d')   
+							) b on a.click_date = b.dateTime
+	GROUP BY a.click_date;
+  </select>
+  
+  <!--  查询用户表所有数据  -->  
+  <select id="getAllUser" resultMap="BaseResultMap">  
+    select * FROM user  
+  </select>
+  
+  <!-- 模糊查询sql:  通过(登录名/职位/学校)其中之一  来模糊查询分页的用户表 -->
+  <select id="getAllUserPageByUserId" resultMap="BaseResultMap">  
+    select * FROM user
+    <where>
+    	<if test="userId != null"> 
+    		and (user_id like '%${userId}%' 
+    		or user_realname like '%${userId}%'
+    		or user_school like '%${userId}%' 
+    		or user_position like '%${userId}%')
+    	</if>
+    </where>
+    limit #{first},#{pageSize} 
+  </select>
+  
+  <!-- 模糊查询sql:  通过(登录名/职位/学校)其中之一  来模糊查询用户表的总个数 -->
+  <select id="getAllUserPageNumberByUserId" resultType="int">  
+    select count(*) FROM user
+    <where>
+    	<if test="userId != null"> 
+    		and (user_id like '%${userId}%' 	
+    		or user_realname like '%${userId}%'
+    		or user_school like '%${userId}%' 
+    		or user_position like '%${userId}%' )
+    	</if>
+    </where>
+  </select>
+  
+  <!-- 模糊查询sql:  通过 用户状态+(登录名/职位/学校)其中之一  来模糊查询分页的用户表 -->
+  <select id="getAllUserPageByUserStatusAndUserId" resultMap="BaseResultMap">  
+    select * FROM user
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+    	user_status = #{userStatus}
+    	<if test="userId != null"> 
+    		and (user_id like '%${userId}%' 
+    		or user_realname like '%${userId}%'
+    		or user_school like '%${userId}%' 
+    		or user_position like '%${userId}%') 
+    	</if>
+    </trim>
+    limit #{first},#{pageSize} 
+  </select>
+  
+  <!-- 模糊查询sql:  通过 用户状态+(登录名/职位/学校)其中之一  来模糊查询用户表的总个数 -->
+  <select id="getAllUserPageNumberByUserStatusAndUserId" resultType="int">  
+    select count(*) FROM user
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+    	user_status = #{userStatus}
+    	<if test="userId != null"> 
+    		and (user_id like '%${userId}%' 
+    		or user_realname like '%${userId}%'
+    		or user_school like '%${userId}%' 
+    		or user_position like '%${userId}%')
+    	</if>
+    </trim>
+  </select>
+
+   
+  <!--  查询用户表所有数据的总条数  -->  
+  <select id="getAllUserTotal" resultType="int">  
+    select count(*) FROM user  
+  </select>  
+  
+  <sql id="Base_Column_List" >  
+    user_id, user_password, user_photo, user_nickname, user_realname, user_sex, 
+    user_summary, user_qq, user_school, user_education, user_qualification, user_position, user_register_time, user_status    
+  </sql>  
+  
+  <!-- 查询sql:	通过用户账号 查询用户表   -->
+  <select id="getUser" resultMap="BaseResultMap" parameterType="java.lang.String" >  
+    select *  
+    from user  
+    where user_id = #{userId,jdbcType=VARCHAR}  
+  </select>  
+  
+  <!-- 删除sql:	通过用户账号 删除用户表   -->
+  <delete id="deleteUserByUserId" parameterType="java.lang.String" >  
+    delete from user  
+    where user_id = #{userId,jdbcType=VARCHAR}  
+  </delete>  
+  
+  <!-- 添加sql:	添加一个用户   -->
+  <insert id="addUser" parameterType="User" >  
+    insert into user (user_id, user_password, user_photo, user_nickname, user_realname, user_sex, 
+    			user_summary, user_qq, user_school, user_education, user_qualification, user_position, user_register_time, user_status  
+      )  
+    values (#{userId,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, #{userPhoto,jdbcType=VARCHAR}, 
+    		#{userNickName,jdbcType=VARCHAR}, #{userRealName,jdbcType=VARCHAR}, #{userSex,jdbcType=VARCHAR}, 
+    		#{userSummary,jdbcType=VARCHAR}, #{userQQ,jdbcType=VARCHAR}, #{userSchool,jdbcType=VARCHAR}, 
+    		#{userEducation,jdbcType=VARCHAR}, #{userQualification,jdbcType=VARCHAR}, #{userPosition,jdbcType=VARCHAR}, 
+    		#{userRegisterTime,jdbcType=TIMESTAMP}, #{userStatus,jdbcType=INTEGER}
+      )  
+  </insert>  
+  
+  <!-- 添加sql:	添加一个用户 (字段可为空)  -->
+  <insert id="addUserSelective" parameterType="User" >  
+    insert into user  
+    <trim prefix="(" suffix=")" suffixOverrides="," >  
+      <if test="userId != null" >  
+        user_id,  
+      </if>  
+      <if test="userPassword != null" >  
+        user_password,  
+      </if>  
+      <if test="userPhoto != null" >  
+        user_photo,  
+      </if>  
+      <if test="userNickName != null" >  
+        user_nickname,  
+      </if>  
+      <if test="userRealName != null" >  
+        user_realname,  
+      </if>  
+      <if test="userSex != null" >  
+        user_sex,  
+      </if>  
+      <if test="userSummary != null" >  
+        user_summary,  
+      </if>  
+      <if test="userQQ != null" >  
+        user_qq,  
+      </if>  
+      <if test="userSchool != null" >  
+        user_school,  
+      </if>  
+      <if test="userEducation != null" >  
+        user_education,  
+      </if>  
+      <if test="userQualification != null" >  
+        user_qualification,  
+      </if>  
+      <if test="userPosition != null" >  
+        user_position,
+      </if>
+      <if test="userRegisterTime != null" >  
+        user_register_time,
+      </if>  
+      <if test="userStatus != null" >  
+        user_status
+      </if> 
+    </trim>  
+    <trim prefix="values (" suffix=")" suffixOverrides="," >  
+      <if test="userId != null" >  
+        #{userId,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userPassword != null" >  
+        #{userPassword,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userPhoto != null" >  
+        #{userPhoto,jdbcType=VARCHAR},  
+      </if> 
+      <if test="userNickName != null" >  
+        #{userNickName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userRealName != null" >  
+        #{userRealName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userSex != null" >  
+        #{userSex,jdbcType=VARCHAR},  
+      </if> 
+      <if test="userSummary != null" >  
+        #{userSummary,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userQQ != null" >  
+        #{userQQ,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userSchool != null" >  
+        #{userSchool,jdbcType=VARCHAR},  
+      </if> 
+      <if test="userEducation != null" >  
+        #{userEducation,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userQualification != null" >  
+        #{userQualification,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userPosition != null" >  
+        #{userPosition,jdbcType=VARCHAR}, 
+      </if> 
+      <if test="userRegisterTime != null" >  
+        #{userRegisterTime,jdbcType=TIMESTAMP}, 
+      </if>  
+      <if test="userStatus != null" >  
+        #{userStatus,jdbcType=INTEGER} 
+      </if>  
+    </trim>  
+  </insert>  
+  
+  <!-- 更新sql:  -->
+  <update id="updateUserSelective" parameterType="User" >  
+    update user  
+    <set >   
+      <if test="userPassword != null" >  
+        user_password = #{userPassword,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userPhoto != null" >  
+        user_photo = #{userPhoto,jdbcType=VARCHAR},  
+      </if> 
+      <if test="userNickName != null" >  
+        user_nickname = #{userNickName,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userRealName != null" >  
+        user_realname = #{userRealName,jdbcType=VARCHAR},  
+      </if>
+      <if test="userSex != null" >  
+        user_sex = #{userSex,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userSummary != null" >  
+        user_summary = #{userSummary,jdbcType=VARCHAR},  
+      </if> 
+      <if test="userQQ != null" >  
+        user_qq = #{userQQ,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userSchool != null" >  
+        user_school = #{userSchool,jdbcType=VARCHAR},  
+      </if>
+      <if test="userEducation != null" >  
+        user_education = #{userEducation,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userQualification != null" >  
+        user_qualification = #{userQualification,jdbcType=VARCHAR},  
+      </if> 
+      <if test="userPosition != null" >  
+        user_position = #{userPosition,jdbcType=VARCHAR},  
+      </if>  
+      <if test="userRegisterTime != null" >  
+        user_register_time = #{userRegisterTime,jdbcType=TIMESTAMP}, 
+      </if> 
+      <if test="userStatus != null" >  
+        user_status = #{userStatus,jdbcType=INTEGER} 
+      </if> 
+    </set>  
+    where user_id = #{userId,jdbcType=VARCHAR}  
+  </update>  
+  
+  <!-- 更新sql:  -->
+  <update id="updateUser" parameterType="User" >  
+    update user  
+    set user_password = #{userPassword,jdbcType=VARCHAR},  
+      	user_photo = #{userPhoto,jdbcType=VARCHAR},  
+      	user_nickname = #{userNickName,jdbcType=VARCHAR},  
+      	user_realname = #{userRealName,jdbcType=VARCHAR},
+      	user_sex = #{userSex,jdbcType=VARCHAR},  
+      	user_summary = #{userSummary,jdbcType=VARCHAR},
+      	user_qq = #{userQQ,jdbcType=VARCHAR},  
+      	user_school = #{userSchool,jdbcType=VARCHAR},
+      	user_education = #{userEducation,jdbcType=VARCHAR},  
+      	user_qualification = #{userQualification,jdbcType=VARCHAR},
+      	user_position = #{userPosition,jdbcType=VARCHAR},
+      	user_register_time = #{userRegisterTime,jdbcType=TIMESTAMP},
+      	user_status = #{userStatus,jdbcType=INTEGER}  
+    where user_id = #{userId,jdbcType=VARCHAR}  
+  </update>  
+</mapper>  

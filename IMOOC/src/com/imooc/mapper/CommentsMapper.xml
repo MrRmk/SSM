@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.ICommentsDao" >
+
+   <!--如下type的Comments就是mybatis-config.xml中配置的Comments-->  
+  <resultMap id="BaseResultMap" type="Comments" > 
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+    <id column="comments_id" property="commentsId" jdbcType="INTEGER" />  
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />  
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />  
+    <result column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />
+    <result column="comments_content" property="commentsContent" jdbcType="VARCHAR" />
+    <result column="comments_time" property="commentsTime" jdbcType="TIMESTAMP" />
+    <result column="comments_thumbs_number" property="commentsThumbsNumber" jdbcType="INTEGER" />
+    
+    <!-- 一对一：评论表中包含用户表 -->
+    <!-- 
+    	property就是Chapter实体类里面包含的小节list对象; 
+    	ofType就是包含的对象的映射路径，即包名+类名,此处由于在mybatis-config.xml中配置过，所以直接用user-->
+    <association property="user" javaType="com.imooc.entity.User">  
+    	<id column="user_id" property="userId" jdbcType="VARCHAR" />  
+	    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />  
+	    <result column="user_photo" property="userPhoto" jdbcType="VARCHAR" />  
+	    <result column="user_nickname" property="userNickName" jdbcType="VARCHAR" />  
+	    <result column="user_realname" property="userRealName" jdbcType="VARCHAR" />  
+	    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />  
+	    <result column="user_summary" property="userSummary" jdbcType="VARCHAR" />  
+	    <result column="user_qq" property="userQQ" jdbcType="VARCHAR" />  
+	    <result column="user_school" property="userSchool" jdbcType="VARCHAR" />  
+	    <result column="user_education" property="userEducation" jdbcType="VARCHAR" />  
+	    <result column="user_qualification" property="userQualification" jdbcType="VARCHAR" />  
+	    <result column="user_position" property="userPosition" jdbcType="VARCHAR" />  
+	    <result column="user_register_time" property="userRegisterTime" jdbcType="TIMESTAMP" /> 
+	    <result column="user_status" property="userStatus" jdbcType="INTEGER" />   
+	</association>
+	
+    <!-- 一对一：评论表中包含小节表 -->
+    <!-- <association property="smallChapter" javaType="com.imooc.entity.SmallChapter">
+    	<id column="small_chapter_id" property="smallChapterId" jdbcType="INTEGER" />  
+    	<result column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+    	<result column="small_chapter_order" property="smallChapterOrder" jdbcType="INTEGER" />  
+    	<result column="small_chapter_title" property="smallChapterTitle" jdbcType="VARCHAR" />  
+    	<result column="video_path" property="videoPath" jdbcType="VARCHAR" />
+    	<result column="video_totaltime" property="videoTotalTime" jdbcType="VARCHAR" />
+	</association> -->
+	
+	<!-- 一对一：评论表中包含章节表 -->
+   <!--  <association property="chapter" javaType="com.imooc.entity.Chapter">
+    	<id column="chapter_id" property="chapterId" jdbcType="INTEGER" />  
+	    <result column="course_id" property="courseId" jdbcType="INTEGER" />  
+	    <result column="chapter_order" property="chapterOrder" jdbcType="INTEGER" />  
+	    <result column="chapter_title" property="chapterTitle" jdbcType="VARCHAR" />
+	</association> -->
+	    
+  </resultMap> 
+  
+	<!--查询sql:  查询所有的评论表的数据  -->  
+	<select id="selectAllComments" resultType="Comments">  
+	  	select * FROM comments 
+	  	order by comments_time DESC, comments_thumbs_number DESC
+	</select>  
+  
+	<sql id="Base_Column_List" >  
+	  	comments_id, user_id, course_id, small_chapter_id, comments_content, comments_time, comments_thumbs_number 
+	</sql>  
+  
+	<!-- 查询sql:  通过评论id 获得一个评论表 对象   -->
+	<select id="getComments" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select *  
+		from comments  
+		where comments_id = #{commentsId,jdbcType=INTEGER}  
+	</select>  
+	
+	<!-- 查询sql:  通过课程id查找   评论表的集合(关联了评论表+用户表+小节表+章节表)      -->
+	<select id="getAllCommentsByCourseId" resultMap="BaseResultMap" parameterType="int">
+		<!-- 没有关联 章节表 (只有评论表+用户表+小节表) -->
+		<!-- select c.*, u.*, small.*  
+		from comments c, user u, small_chapter small 
+		where course_id = #{courseId} and c.user_id = u.user_id and c.small_chapter_id = small.small_chapter_id
+		order by comments_time DESC, comments_thumbs_number DESC -->
+		
+		<!-- 关联了评论表+用户表+小节表+章节表 -->
+		select c.*, u.*, small.* , chapter.*
+		from comments c, user u, small_chapter small,chapter
+		where c.course_id = #{courseId} and c.user_id = u.user_id and c.small_chapter_id = small.small_chapter_id and chapter.chapter_id = small.chapter_id
+		order by c.comments_time DESC, c.comments_thumbs_number DESC
+	</select> 
+	
+	<!-- 查询sql:  通过课程id查找   评论表的集合(关联了评论表+用户表)      -->
+	<select id="getCommentsByCourseId" resultMap="BaseResultMap" parameterType="int">
+		<!-- 关联了评论表+用户表 -->
+		select c.*, u.*
+		from comments c, user u
+		where c.course_id = #{courseId} and c.user_id = u.user_id 
+		order by c.comments_time DESC, c.comments_thumbs_number DESC
+	</select>
+	
+	<!-- 查询sql:  通过课程id和小节id查找   评论表的集合      -->
+	<select id="getAllCommentsByCourseIdAndSmallChapterId" resultMap="BaseResultMap">
+		select *  
+		from comments  
+		where course_id = #{courseId,jdbcType=INTEGER} and small_chapter_id = #{smallChapterId,jdbcType=INTEGER} 
+	</select> 
+	
+	<!-- 查询sql:  通过课程id查找   该课程的评论数量      -->
+	<select id="getCommentsNumberByCourseId" resultType="int" parameterType="int">
+		select count(*)  
+		from comments  
+		where course_id = #{courseId,jdbcType=INTEGER} 
+	</select> 
+
+	<!-- 添加评论： 增加一条评论记录(字段可为空)   -->
+	<insert id="addComments" parameterType="Comments">
+		insert into comments
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="commentsId != null"> comments_id, </if>
+			<if test="userId != null"> user_id, </if>
+			<if test="courseId != null"> course_id, </if>
+			<if test="smallChapterId != null"> small_chapter_id, </if>
+			<if test="commentsContent != null"> comments_content, </if>
+			<if test="commentsTime != null"> comments_time, </if>
+			<if test="commentsThumbsNumber != null"> comments_thumbs_number, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="commentsId != null">  #{commentsId,jdbcType=INTEGER}, </if>
+			<if test="userId != null"> #{userId,jdbcType=VARCHAR}, </if>
+			<if test="courseId != null"> #{courseId,jdbcType=INTEGER}, </if>
+			<if test="smallChapterId != null"> #{smallChapterId,jdbcType=INTEGER}, </if>
+			<if test="commentsContent != null"> #{commentsContent,jdbcType=VARCHAR}, </if>
+			<if test="commentsTime != null"> #{commentsTime,jdbcType=TIMESTAMP}, </if>
+			<if test="commentsThumbsNumber != null"> #{commentsThumbsNumber,jdbcType=INTEGER}, </if>
+		</trim>
+	</insert>
+	
+	<!-- 删除评论:	通过评论id  删除一条评论记录   -->
+	 <delete id="deleteComments" parameterType="int" >  
+	   delete from comments  
+	   where comments_id = #{commentsId,jdbcType=INTEGER}  
+	 </delete>  
+	 
+	 <!-- 更新sql:  -->
+	 <update id="updateComments" parameterType="Comments" >  
+	   update comments  
+	   <set >   
+	     <if test="userId != null" >  
+	       user_id = #{userId,jdbcType=VARCHAR},  
+	     </if>  
+	     <if test="courseId != null" >  
+	       course_id = #{courseId,jdbcType=INTEGER},  
+	     </if> 
+	     <if test="smallChapterId != null" >  
+	       small_chapter_id = #{smallChapterId,jdbcType=INTEGER},  
+	     </if>  
+	     <if test="commentsContent != null" >  
+	       comments_content = #{commentsContent,jdbcType=VARCHAR},  
+	     </if>
+	     <if test="commentsTime != null" >  
+	       comments_time = #{commentsTime,jdbcType=TIMESTAMP},  
+	     </if> 
+	     <if test="commentsThumbsNumber != null" >  
+	       comments_thumbs_number = #{commentsThumbsNumber,jdbcType=INTEGER},  
+	     </if> 
+	   </set>  
+	   where comments_id = #{commentsId,jdbcType=INTEGER}  
+	 </update>
+
+</mapper>  

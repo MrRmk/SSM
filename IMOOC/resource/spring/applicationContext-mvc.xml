@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+       xmlns:context="http://www.springframework.org/schema/context"  
+       xmlns:mvc="http://www.springframework.org/schema/mvc"  
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+    
+    <!-- 告知Spring，我们启用注解驱动 -->  
+    <mvc:annotation-driven/>  
+    
+    <!-- org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler，  
+    它会像一个检查员，对进入DispatcherServlet的URL进行筛查，如果发现是静态资源的请求，  
+    就将该请求转由Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理。 -->  
+    <mvc:default-servlet-handler/>  
+    
+    <!-- 指定要扫描的包的位置 -->  
+    <context:component-scan base-package="com.imooc" />  
+    
+    <!-- 对静态资源文件的访问,因为Spring MVC会拦截所有请求,导致jsp页面中对js和CSS的引用也被拦截,配置后可以把对资源的请求交给项目的  
+    默认拦截器而不是Spring MVC-->  
+    <mvc:resources mapping="/static/**" location="/static/" />  
+  
+    <!-- 配置Spring MVC的视图解析器 -->  
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+        <!-- 有时我们需要访问JSP页面,可理解为在控制器controller的返回值加前缀和后缀,变成一个可用的URL地址 -->  
+        <property name="prefix" value="/WEB-INF/jsp/"/>  
+        <property name="suffix" value=".jsp"/>  
+    </bean>  
+    
+    
+    <!-- 多文件上传的配置Configure the multipart resolver -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		  <property name="defaultEncoding" value="utf-8" />	<!-- 是请求的编码格式，默认为iso-8859-1 -->
+	      <property name="maxUploadSize" value="10485760000" /> <!-- 10G 约= 100000M=1024*1024*10000 是上传文件的大小，单位为字节 -->
+	      <property name="maxInMemorySize" value="40960" /> <!-- 40KB:读取文件到内存中最大的字节数，默认是1024;大小低于此值的文件存储在内存中，否则它们将直接存储在磁盘中。默认值是10KB（10240字节） -->
+	</bean>
+</beans>  

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+
+<!--namespace就是与此文件对应的Dao接口的全路径-->  
+<mapper namespace="com.imooc.dao.IFansDao" >
+   
+   <!--如下type的Fans就是mybatis-config.xml中配置的Fans-->  
+  <resultMap id="BaseResultMap" type="Fans" > 
+  
+  	<!-- column是数据库字段类型，property是实体类类型    jdbcType是数据库类型  -->
+    <id column="fans_id" property="fansId" jdbcType="INTEGER" />  
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />  
+    <result column="followed_user" property="followedUser" jdbcType="VARCHAR" />  
+    <result column="fans_status" property="fansStatus" jdbcType="INTEGER" />
+    
+    <!-- 一对一：粉丝表中包含用户表 -->
+    <!-- collection中不是javaType而是ofType,通过property也知道是list，即多个 ; 
+    	property就是Chapter实体类里面包含的小节list对象; 
+    	ofType就是包含的对象的映射路径，即包名+类名,此处由于在mybatis-config.xml中配置过，所以直接用user-->
+    <association property="user" javaType="com.imooc.entity.User">  
+    	<id column="user_id" property="userId" jdbcType="VARCHAR" />  
+	    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />  
+	    <result column="user_photo" property="userPhoto" jdbcType="VARCHAR" />  
+	    <result column="user_nickname" property="userNickName" jdbcType="VARCHAR" />  
+	    <result column="user_realname" property="userRealName" jdbcType="VARCHAR" />  
+	    <result column="user_sex" property="userSex" jdbcType="VARCHAR" />  
+	    <result column="user_summary" property="userSummary" jdbcType="VARCHAR" />  
+	    <result column="user_qq" property="userQQ" jdbcType="VARCHAR" />  
+	    <result column="user_school" property="userSchool" jdbcType="VARCHAR" />  
+	    <result column="user_education" property="userEducation" jdbcType="VARCHAR" />  
+	    <result column="user_qualification" property="userQualification" jdbcType="VARCHAR" />  
+	    <result column="user_position" property="userPosition" jdbcType="VARCHAR" />  
+	    <result column="user_register_time" property="userRegisterTime" jdbcType="TIMESTAMP" /> 
+	    <result column="user_status" property="userStatus" jdbcType="INTEGER" />   
+	</association>
+    
+  </resultMap> 
+   
+    <!-- 查询sql:  通过粉丝id 获得一个粉丝表 对象   -->
+	<select id="getFans" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select fans.*,`user`.*
+	  	FROM fans, user
+		where fans_id = #{fansId,jdbcType=INTEGER}  
+			AND fans.user_id = `user`.user_id
+	</select>  
+   
+	<!--查询sql:  通过用户id 查询该用户所有的粉丝记录  -->  
+	<select id="getAllFansByUserId" resultMap="BaseResultMap" parameterType="String">  
+	  	select fans.*,`user`.*
+	  	FROM fans, user
+		WHERE fans.followed_user = #{userId,jdbcType=VARCHAR} 
+			AND fans.user_id = `user`.user_id
+	</select> 
+	
+	<!--查询sql:  通过用户id 查询该用户所有的粉丝总个数  -->  
+	<select id="getFansNumberByUserId" resultType="int" parameterType="String">  
+	  	SELECT count(*)
+		from (
+			select fans.*
+			FROM fans, user
+			WHERE fans.followed_user = #{userId,jdbcType=VARCHAR} 
+				AND fans.user_id = `user`.user_id
+		) a
+	</select> 
+	
+	<!--查询sql:  通过用户id 查询该用户所有关注的用户的记录  -->  
+	<select id="getAllFollowsByUserId" resultMap="BaseResultMap" parameterType="String">  
+	  	select fans.*,`user`.*
+	  	FROM fans, user
+		WHERE fans.user_id = #{userId,jdbcType=VARCHAR} 
+			AND fans.followed_user = `user`.user_id
+	</select> 
+	
+	<!--查询sql:  通过用户id 查询该用户所有关注用户的总个数  -->  
+	<select id="getFollowsNumberByUserId" resultType="int" parameterType="String">  
+	  	SELECT count(*)
+		from (
+				select fans.*
+				FROM fans, user
+				WHERE fans.user_id = #{userId,jdbcType=VARCHAR} 
+					AND fans.followed_user = `user`.user_id
+		)a
+	</select> 
+	
+	<!-- 添加粉丝： 增加一条粉丝记录(字段可为空)   -->
+	<insert id="addFans" parameterType="fans">
+		insert into fans
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="fansId != null"> fans_id, </if>
+			<if test="userId != null"> user_id, </if>
+			<if test="followedUser != null"> followed_user, </if>
+			<if test="fansStatus != null"> fans_status, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="fansId != null">  #{fansId,jdbcType=INTEGER}, </if>
+			<if test="userId != null"> #{userId,jdbcType=VARCHAR}, </if>
+			<if test="followedUser != null"> #{followedUser,jdbcType=VARCHAR}, </if>
+			<if test="fansStatus != null"> #{fansStatus,jdbcType=INTEGER}, </if>
+		</trim>
+	</insert>
+	
+	<!-- 删除粉丝:	通过粉丝id  删除一条粉丝记录   -->
+	 <delete id="deleteFans" parameterType="int" >  
+	   delete from fans
+	   where fans_id = #{fansId,jdbcType=INTEGER}  
+	 </delete>  
+	 
+	 
+
+</mapper>  

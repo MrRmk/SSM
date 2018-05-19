@@ -1,0 +1,545 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+}
+.clearfix {
+    clear: both;
+}
+/*****************主要内容 main页面*************************/
+
+.main {
+	display: block;
+	padding: 0;
+	min-height: 750px;
+	margin-bottom: 100px;
+   /*  background-image: linear-gradient(180deg, #D1EEEE,#ffffff); */
+    /* height: 200px; */
+}
+
+/* 主内容面板 */
+.content-wrap {
+    padding-top: 32px;
+    background-image: linear-gradient(180deg, #D1EEEE,#ffffff);
+}
+/* 主内容面板 左侧一级导航栏面板 */
+.menuwrap {
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 444px;
+    position: relative;
+    width: 1200px;
+    margin: 0 auto;
+    min-height: 444px;
+    background-color: #93999f;
+    box-shadow: 0 12px 24px 0 rgba(7, 17, 27, .2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+/* 导航栏  二级分类面板 */
+.submenu {
+	background: #F8FAFC;
+	left: 216px;
+	width: 768px;
+	z-index: 581;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .1);
+}
+.submenu {
+	position: absolute;
+	top: 0;
+	height: 444px;
+}
+.menuContent, .submenu, .submenu .subinnerBox {
+	box-sizing: border-box;
+}
+/* .hide {
+      display: none;
+  }  */  
+
+.submenu .innerBox{
+    background-color: #fff;
+    padding: 12px 48px 32px;
+    position: relative;
+    min-height: 150px
+}
+    .submenu .subinnerBox {
+        overflow: hidden;
+    }
+        .submenu .banner-line {
+            position: relative;
+            height: 1px;
+            margin: 35px 0 23px;
+            background-color: rgba(77,85,93,.08);
+        }
+            .submenu .banner-line span {
+                position: absolute;
+                top: -12px;
+                left: 0;
+                width: 36px;
+                font-size: 12px;
+                color: #07111B;
+                line-height: 24px;
+                background-color: #fff;
+            } 
+            .cates-box .small-title {
+                line-height: 28px;
+                color: #4d555d;
+            }
+            .l {
+                float: left;
+            }
+            .bold {
+                font-weight: 700!important;
+            }
+            .mr10 {
+                margin-right: 10px!important;
+            }
+            .submenu .tag-box {
+                font-size: 0;
+            }
+            .submenu .tag-box a {
+                font-size: 14px;
+                color: #4D555D;
+                line-height: 24px;
+                margin-right: 24px;
+            }
+            .submenu .tag-box a:hover{
+                color: #EC1500;
+            } 
+
+
+.recomment-box {
+    padding: 36px 0 48px 48px;
+}
+    .recomment-box .banner-course-card {
+        width: 312px;
+        height: 60px;
+        margin-right: 48px;
+        margin-bottom: 36px;
+    }
+        .recomment-box a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+            .recomment-box .banner-course-card img {
+                width: 64px;
+                height: 42px;
+                border-radius: 4px;
+                background-color: #ccc;
+            }
+            .recomment-box .banner-course-card .course-card {
+                margin-left: 16px;
+            }
+            .recomment-box .banner-course-card .course-card-name {
+                width: 232px;
+                font-size: 12px;
+                color: #07111B;
+                line-height: 20px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+            .recomment-box .banner-course-card .course-card-info, .recomment-box .banner-course-card .course-card-price {
+                font-size: 12px;
+                color: #4D555D;
+                line-height: 20px;
+            }
+            .recomment-box .banner-course-card .course-card-info span {
+                margin-right: 12px;
+            }
+            [class*=" icon-"], [class^=icon-] {
+                font-family: icomoon!important;
+                speak: none;
+                font-style: normal;
+                font-weight: 400;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            .recomment-box .banner-course-card .course-card-info, .recomment-box .banner-course-card .course-card-price {
+                font-size: 12px;
+                color: #4D555D;
+                line-height: 20px;
+            }
+            .course-card-price {
+                font-size: 12px;
+                color: #4D555D;
+                line-height: 20px;
+                margin-top: 8px;
+            }
+.recomment-box .l{
+    float: left;
+}
+
+
+/* 一级分类内容导航 */
+.menuContent {
+	position: relative;
+	float: left;
+	width: 216px;
+	height: 444px;
+	z-index: 2;
+	padding-top: 12px;
+	background: #2b333b;
+	border-bottom-left-radius: 4px;
+	font-weight: 400;
+}
+.menuContent .item {
+	height: 60px;
+	line-height: 60px;
+	font-size: 12px;
+	cursor: pointer;
+	padding-left: 12px;
+	position: relative;
+}
+.menuContent .item:hover {
+    background-color: #6B7176;
+}
+
+.menuContent .item>a {
+	display: block;
+	color: rgba(255,255,255,.6);
+	padding: 0 16px;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	height: 60px;
+	transition: all .1s;
+}
+.menuContent .item>a:hover{
+	text-decoration: none;
+}
+
+:link, :visited, ins {
+	text-decoration: none;
+}
+.menuContent .item .group {
+	font-size: 16px;
+}
+.menuContent .item i {
+	position: absolute;
+	right: 16px;
+	top: 24px;
+	color: rgba(255,255,255,.5);
+	font-size: 16px;
+}
+[class*=" icon-"], [class^=icon-] {
+	font-family: icomoon!important;
+	speak: none;
+	font-style: normal;
+	font-weight: 400;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+i{
+	font-style: italic;
+}
+/* .icon-right2:before {
+	content: "\e914";
+} */
+
+
+/* 轮播面板 */
+.g-banner-content{
+    position: relative;
+    width: 984px;
+    height: 444px;
+    margin-left: 216px;
+    /* border-radius: 8px; */
+}
+.g-banner-content .carousel{
+    height: 444px;
+}
+.g-banner-content .carousel-inner img{
+	width: 984px;
+    height: 444px;
+}
+.g-banner-content .carousel-inner>.item>img{
+	display: block;
+    max-width: 100%;
+    height: 444px;
+}
+
+
+/******************DIV背景及边框设置*******************************************/
+.bgfff{
+    box-shadow: 0 2px 8px 0 rgba(7,17,27,.06);
+}
+.bg000{
+    background-color: #F8FAFC;
+    box-shadow: 0 2px 4px 0 rgba(7,17,27,.06);
+}
+
+/* 分类---实战推荐 */
+.types-block {
+    position: relative;
+    width: 1200px;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+/*实战推荐---标题*/
+.types-block .types-title {
+    font-size: 20px;
+    font-weight: 200;
+    color: #07111b;
+    margin-bottom: 24px;
+    line-height: 30px;
+    height: 30px;
+    text-align: center;
+}
+.h3, h3 {
+    font-size: 24px;
+}
+
+/*实战推荐---内容*/
+.course-card-container {
+    width: 224px;
+    height: 228px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px 0 rgba(7,17,27,.1);
+    transition: .3s all linear;
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+.course-card-container:hover{
+    box-shadow: 0 6px 11px 0 rgba(7,17,27,.3);
+}
+.course-card-container .course-card-top {
+    height: 48px;
+    line-height: 48px;
+    padding: 0 24px;
+    overflow: hidden;
+    color: #FFF;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+/*五种颜色*/
+.brown-bg {
+    background-color: #534542;
+    background-color: #B22222;
+    background-color: #BDB76B;
+    background-color: #FFB800;
+    background-color: #FF5722;
+    background-color: #1E9FFF;
+}
+.gray-bg {
+    background-color: #CCC;
+    background-color: #BDB76B;
+    background-color: #B22222;
+    background-color: #8DEEEE;
+    background-color: #FF5722;
+}
+.purple-bg {
+    background-color: #CD71E1;
+    background-color: #CD0000;
+    background-color: #EE00EE;
+}
+.pink-bg {
+    background-color: #FC789E;
+}
+.green-bg {
+    background-color: #04B95C;
+    background-color: #17AF0E;
+}
+
+/* Java高级第二个颜色 */
+.blue-bg{
+	background-color: #009688;
+}
+.course-card-top span {
+    color: #FFF;
+    font-weight: bold;
+}
+.course-card-container .course-card-content {
+    background-color: #fff;
+    padding: 0px 22px;
+    box-sizing: border-box;
+}
+.course-card-container .course-card-name {
+    font-size: 14px;
+    color: #07111b;
+    height: 44px;
+    line-height: 20px;
+    width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.course-card-container .course-card-brief {
+    font-size: 12px;
+    color: #93999f;
+    line-height: 22px;
+    margin: 12px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    height: 44px;
+    width: 180px;
+}
+.course-card-container .course-card-info, .course-card-container p {
+    font-size: 12px;
+    color: #93999f;
+    line-height: 22px;
+    margin: 12px 0;
+}
+p {
+    margin: 0 0 10px;
+}
+.course-card-container .course-card-bottom {
+    font-size: 12px;
+    text-align: right;
+}
+.course-card-container .course-card-info {
+    float: left;
+    margin: 0;
+}
+.course-card-container .course-card-info, .course-card-container p {
+    font-size: 12px;
+    color: #93999f;
+    line-height: 22px;
+}
+.course-card-container .course-card-price {
+    float: right;
+    color: #f01414;
+    font-weight: 200;
+}
+/*Java开发工程师*/
+.types-content-left {
+    float: left;
+    width: 224px;
+    height: 348px;
+    border-radius: 4px;
+    margin-right: 20px;
+    box-shadow: 0 4px 8px 0 rgba(7,17,27,.2);
+    background-image: url(../images/Java-background.jpg);
+    background-position: center 0;
+    background-size: cover;
+}
+.types-content-left:hover{
+    box-shadow: 0 6px 11px 0 rgba(7,17,27,.3);
+}
+.course-card-container-fix {
+    width: 224px;
+    height: 228px;
+    border-radius: 4px;
+    /*box-shadow: 0 4px 8px 0 rgba(7,17,27,.1);*/
+    transition: .3s all linear;
+    float: left;
+    margin-right: 20px;
+    padding-top: 20px;
+}
+.course-card-container-fix .course-card-content {
+    padding: 0px 22px;
+    color: #FFF;
+}
+.types-content-right {
+    float: left;
+    width: 956px;
+    height: 348px;
+}
+.types-content-banner {
+    height: 100px;
+    margin-bottom: 20px;
+}
+.types-content-banner-block {
+    border-radius: 4px;
+    float: left;
+    width: 468px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    color: #FFF;
+    font-size: 18px;
+    overflow: hidden;
+}
+.types-content-banner-block:hover{
+    box-shadow: 0 6px 11px 0 rgba(7,17,27,.3);
+}
+/*名校讲师*/
+.lecturer-card-container {
+    width: 224px;
+    height: 320px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px 0 rgba(7,17,27,.1);
+    transition: .3s all linear;
+    float: left;
+    margin-right: 20px;
+}
+.lecturer-card-container:hover{
+    box-shadow: 0 6px 11px 0 rgba(7,17,27,.3);
+}
+.lecturer-item {
+    width: 224px;
+    height: 320px;
+    margin-right: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px 0 rgba(7,17,27,.1);
+    box-sizing: border-box;
+    padding: 36px 24px 0;
+    text-align: center;
+    border-radius: 4px;
+}
+.lecturer-item .lecturer-uimg {
+    display: block;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+}
+.lecturer-item .lecturer-name {
+    display: block;
+    font-size: 16px;
+    line-height: 24px;
+    color: #07111b;
+    font-weight: 700;
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: -o-ellipsis-lastline;
+    -webkit-line-clamp: 1;
+}
+.lecturer-item .lecturer-title {
+    display: block;
+    font-size: 12px;
+    line-height: 24px;
+    color: #93999f;
+    margin-bottom: 15px;
+}
+.lecturer-item .lecturer-p {
+    display: block;
+    font-size: 12px;
+    line-height: 20px;
+    color: #93999f;
+    height: 56px;
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: -o-ellipsis-lastline;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/************对齐页面布局***************/
+.card-right{
+	margin-right: 0px;
+}
+
+/************添加的样式class_name***************/
+.item-on {
+    background-color: #6B7176;
+}
